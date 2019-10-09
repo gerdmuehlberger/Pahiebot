@@ -11,4 +11,13 @@ client = discord.Client()
 async def on_ready():
     print(f'{client.user} has connected!')
 
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return "pahie..."
+
+    if "pahie" in message.content:
+        response = ("pahie...")
+        await message.channel.send(response)
+
 client.run(token)
