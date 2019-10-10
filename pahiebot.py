@@ -21,7 +21,7 @@ bot = commands.Bot(command_prefix='!')
 # let the bot join the voice channel of the user who called it.
 #
 @bot.command(pass_context=True)
-async def join(ctx):
+async def summonpahie(ctx):
     global voice
     channel = ctx.message.author.voice.channel
     voice = get(bot.voice_clients, guild=ctx.guild)
@@ -38,7 +38,7 @@ async def join(ctx):
 # send the bot out of the voice channel again
 #
 @bot.command(pass_context=True)
-async def leave(ctx):
+async def kickpahie(ctx):
     channel = ctx.message.author.voice.channel
     voice = get(bot.voice_clients, guild=ctx.guild)
 
@@ -68,16 +68,21 @@ async def on_message(message):
 
     #
     # this fixes the command issue, its just a quickfix though.
+    # one needs to escape commands from the on_message function, surely theres a better way than this...
     # bug : https://stackoverflow.com/questions/49331096/why-does-on-message-stop-commands-from-working
     #
-    if message.content.startswith('!join'):
+    if message.content.startswith('!summonpahie'):
         await bot.process_commands(message)
 
-    if message.content.startswith('!leave'):
+    if message.content.startswith('!kickpahie'):
         await bot.process_commands(message)
 
     if message.content.startswith('!play'):
         await bot.process_commands(message)
+
+    if message.content.startswith('!bobquote'):
+        await bot.process_commands(message)
+
 
     if "pahie" in message.content:
         response = ("Pahie...")
@@ -112,7 +117,7 @@ async def on_message(message):
 #
 # this needs to be altered. it works but i only want a temp file that plays when a link is pasted
 #
-
+'''
 @bot.command(pass_context=True)
 async def play(ctx, url: str):
     song = os.path.isfile("song.mp3")
@@ -125,7 +130,7 @@ async def play(ctx, url: str):
         await ctx.send("Music is already playing.")
         return
 
-    await ctx.send("getting rdy")
+    await ctx.send("Pahie is downloading your song...")
     voice = get(bot.voice_clients, guild=ctx.guild)
 
     ydl_options = {
@@ -154,6 +159,27 @@ async def play(ctx, url: str):
     new_name = name.rsplit("-", 2)
     await ctx.send(f"playing: {new_name}")
     print("playing")
+    
+'''
+
+#
+# play random spongebob quote
+#
+@bot.command(pass_context=True)
+async def bobquote(ctx):
+
+    try:
+        voice = get(bot.voice_clients, guild=ctx.guild)
+        rand_number = random.randint(1, 11)
+
+        voice.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print("finished playing quote."))
+        voice.source = discord.PCMVolumeTransformer(voice.source)
+        voice.source.volume = 0.07
+
+    except:
+        await ctx.send("Wait until the current quote is finished!")
+        return
+
 
 
 bot.run(token)
