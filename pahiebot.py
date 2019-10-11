@@ -12,6 +12,13 @@ from dotenv import load_dotenv
 token = 'NjMxNTgzODMzMDU3Mzk0NzA3.XZ4-vA.i4ZlimCWHkfVYkM4JzDF8H-RNVU'
 bot = commands.Bot(command_prefix='!')
 
+#
+#print that the bot is ready to make sure that it actually logged on
+#
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected!')
+
 
 #######################################################################
 ###############     COMMANDS SECTION     ##############################
@@ -51,11 +58,18 @@ async def kickpahie(ctx):
         await ctx.send("Pahie could'nt be found in any voice channel...")
 
 #
-#print that the bot is ready to make sure that it actually logged on
+
 #
-@bot.event
-async def on_ready():
-    print(f'{bot.user} has connected!')
+# send list of available commands to textchat
+#
+
+@bot.command(pass_context=True)
+async def helpmepahie(ctx):
+    await ctx.send("Summon Pahie: !summonpahie\n"
+                   "Kick Pahie: !kickpahie\n"
+                   "Pahie plays Spongebob:(Pahie has to be summoned to a channel first): !bobquote")
+
+
 
 #######################################################################
 ##################     MESSAGING SECTION     ##########################
@@ -75,6 +89,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!kickpahie'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!helpmepahie'):
         await bot.process_commands(message)
 
     if message.content.startswith('!play'):
@@ -170,16 +187,29 @@ async def bobquote(ctx):
 
     try:
         voice = get(bot.voice_clients, guild=ctx.guild)
-        rand_number = random.randint(1, 11)
+        if voice is not None:
+            rand_number = random.randint(1, 21)
 
-        voice.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print("finished playing quote."))
-        voice.source = discord.PCMVolumeTransformer(voice.source)
-        voice.source.volume = 0.07
+            voice.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print("finished playing quote."))
+            voice.source = discord.PCMVolumeTransformer(voice.source)
+            voice.source.volume = 0.07
+        else:
+            await ctx.send("Pahie is not here!")
 
-    except:
+    except Exception as e:
+        print(e)
         await ctx.send("Wait until the current quote is finished!")
         return
 
+#######################################################################
+####################      STORY SECTION     ###########################
+#######################################################################
+
+
+
+#######################################################################
+###################      LEVELING SECTION     #########################
+#######################################################################
 
 
 bot.run(token)
