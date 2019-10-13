@@ -67,8 +67,9 @@ async def helpmepahie(ctx):
     await ctx.send("!summonpahie: summons Pahie into your channel.\n"
                    "!kickpahie: kicks Pahie out of your channel.\n"
                    "!bobquote: Pahie plays Spongebobquote (Requires summoning to a channel first). \n"
-                   "!unleashpahie: Pahie follows you and appears randomly in your channel at some point.\n"
-                   "!leashpahie: Pahie stops following you." )
+                   "!unleashpahie: Pahie runs away and appears randomly in your channel at some point. "
+                   "(He will not listen to commands while unleashed.)\n"
+                   "!leashpahie: Pahie starts following your commands again.")
 
 
 #
@@ -86,7 +87,6 @@ def globallyChange():
 async def play_pahie_sound(ctx):
     try:
         if voice is not None:
-
             voice.play(discord.FFmpegPCMAudio(f"bobquotes/1.mp3"),
                        after=lambda e: "song finished playing")
             voice.source = discord.PCMVolumeTransformer(voice.source)
@@ -104,14 +104,19 @@ async def play_pahie_sound(ctx):
 @bot.command(pass_context=True)
 async def unleashpahie(ctx):
 
-    globallyChange()
+    await ctx.send("You see Pahie running away in the distance...\n"
+                   "He will not listen to any commands until he visits or you caught him again.\n"
+                   "Type !leashpahie to catch him next time hes visiting.")
 
+    globallyChange()
     starttime = time.time()
 
     while pahie_is_unleashed is True:
         #
         # bot joins the channel
         #
+        random_timestamp = random.randint(20, 60)
+
         global voice
         channel = ctx.message.author.voice.channel
         voice = get(bot.voice_clients, guild=ctx.guild)
@@ -121,14 +126,14 @@ async def unleashpahie(ctx):
         else:
             voice = await channel.connect()
 
-        await ctx.send(f'Pahie joined {channel}')
+        #await ctx.send(f'Pahie runs towards {ctx.message.author}!')
 
         #
         # bot plays sound and waits for the soundfile to finish
         #
 
         await play_pahie_sound(ctx)
-        time.sleep(5)
+        time.sleep(6)
 
         #
         # bot leaves channel again and waits for repeat
@@ -137,10 +142,11 @@ async def unleashpahie(ctx):
 
         if voice and voice.is_connected():
             await voice.disconnect()
+            #await ctx.send(f'Pahie run away from {ctx.message.author} again.')
         else:
             await ctx.send("Pahie could'nt be found in any voice channel...")
 
-        time.sleep(10.0 - ((time.time() - starttime) % 10.0))
+        time.sleep(random_timestamp - ((time.time() - starttime) % random_timestamp))
 
 #
 # this should stop the bot from joining again
@@ -152,7 +158,6 @@ async def leashpahie(ctx):
         await ctx.send(f'You leashed Pahie again...')
     else:
         await ctx.send(f'Pahie has not been unleashed yet.')
-
 
 
 #######################################################################
@@ -223,55 +228,6 @@ async def on_message(message):
 #######################################################################
 ################      AUDIO PLAYING SECTION     #######################
 #######################################################################
-
-#
-# this needs to be altered. it works but i only want a temp file that plays when a link is pasted
-#
-'''
-@bot.command(pass_context=True)
-async def play(ctx, url: str):
-    song = os.path.isfile("song.mp3")
-    try:
-        if song:
-            os.remove("song.mp3")
-            print("removed old song")
-    except PermissionError:
-        print("song cant be removed when played!")
-        await ctx.send("Music is already playing.")
-        return
-
-    await ctx.send("Pahie is downloading your song...")
-    voice = get(bot.voice_clients, guild=ctx.guild)
-
-    ydl_options = {
-        'format': 'bestaudio/best',
-        'postprocessors':[{
-            'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
-        }],
-    }
-
-    with youtube_dl.YoutubeDL(ydl_options) as ydl:
-        print("downloading audio now")
-        ydl.download([url])
-
-    for file in os.listdir("./"):
-        if file.endswith(".mp3"):
-            name = file
-            print(f"renamed file to {file}")
-            os.rename(file, "song.mp3")
-
-    voice.play(discord.FFmpegPCMAudio("song.mp3"), after=lambda e: print(f"{name} has finished playing"))
-    voice.source = discord.PCMVolumeTransformer(voice.source)
-    voice.source.volume = 0.07
-
-    new_name = name.rsplit("-", 2)
-    await ctx.send(f"playing: {new_name}")
-    print("playing")
-    
-'''
-
 #
 # play random spongebob quote
 #
@@ -299,10 +255,8 @@ async def bobquote(ctx):
 #######################################################################
 
 
-
 #######################################################################
 ###################      LEVELING SECTION     #########################
 #######################################################################
-
 
 bot.run(token)
