@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 import random
+import time
 import youtube_dl
 
 
@@ -42,7 +43,7 @@ async def summonpahie(ctx):
 
 
 #
-# send the bot out of the voice channel again
+# send the bot out of the voice channel
 #
 @bot.command(pass_context=True)
 async def kickpahie(ctx):
@@ -57,17 +58,100 @@ async def kickpahie(ctx):
         print("bot was told to leave but wasnt in one...")
         await ctx.send("Pahie could'nt be found in any voice channel...")
 
-#
 
 #
 # send list of available commands to textchat
 #
-
 @bot.command(pass_context=True)
 async def helpmepahie(ctx):
-    await ctx.send("Summon Pahie: !summonpahie\n"
-                   "Kick Pahie: !kickpahie\n"
-                   "Pahie plays Spongebob:(Pahie has to be summoned to a channel first): !bobquote")
+    await ctx.send("!summonpahie: summons Pahie into your channel.\n"
+                   "!kickpahie: kicks Pahie out of your channel.\n"
+                   "!bobquote: Pahie plays Spongebobquote (Requires summoning to a channel first). \n"
+                   "!unleashpahie: Pahie follows you and appears randomly in your channel at some point.\n"
+                   "!leashpahie: Pahie stops following you." )
+
+
+#
+# once the bot is ready, run a function thats called at random times and
+# lets the bot join into a random channel, play a soundfile and leave again
+#
+
+pahie_is_unleashed = False
+
+def globallyChange():
+    global pahie_is_unleashed
+    pahie_is_unleashed = not pahie_is_unleashed
+
+
+async def play_pahie_sound(ctx):
+    try:
+        if voice is not None:
+
+            voice.play(discord.FFmpegPCMAudio(f"bobquotes/1.mp3"),
+                       after=lambda e: "song finished playing")
+            voice.source = discord.PCMVolumeTransformer(voice.source)
+            voice.source.volume = 0.07
+        else:
+            await ctx.send("Pahie is not here!")
+
+    except Exception as e:
+        print(e)
+        await ctx.send("Wait until the current quote is finished!")
+        return
+
+
+
+@bot.command(pass_context=True)
+async def unleashpahie(ctx):
+
+    globallyChange()
+
+    starttime = time.time()
+
+    while pahie_is_unleashed is True:
+        #
+        # bot joins the channel
+        #
+        global voice
+        channel = ctx.message.author.voice.channel
+        voice = get(bot.voice_clients, guild=ctx.guild)
+
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()
+
+        await ctx.send(f'Pahie joined {channel}')
+
+        #
+        # bot plays sound and waits for the soundfile to finish
+        #
+
+        await play_pahie_sound(ctx)
+        time.sleep(5)
+
+        #
+        # bot leaves channel again and waits for repeat
+        #
+
+
+        if voice and voice.is_connected():
+            await voice.disconnect()
+        else:
+            await ctx.send("Pahie could'nt be found in any voice channel...")
+
+        time.sleep(10.0 - ((time.time() - starttime) % 10.0))
+
+#
+# this should stop the bot from joining again
+#
+@bot.command(pass_context=True)
+async def leashpahie(ctx):
+    if pahie_is_unleashed is True:
+        globallyChange()
+        await ctx.send(f'You leashed Pahie again...')
+    else:
+        await ctx.send(f'Pahie has not been unleashed yet.')
 
 
 
@@ -94,17 +178,26 @@ async def on_message(message):
     if message.content.startswith('!helpmepahie'):
         await bot.process_commands(message)
 
-    if message.content.startswith('!play'):
+    if message.content.startswith('!unleashpahie'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!leashpahie'):
         await bot.process_commands(message)
 
     if message.content.startswith('!bobquote'):
         await bot.process_commands(message)
 
 
+    #
+    # bot answers with "pahie" everytime he is mentioned
+    #
     if "pahie" in message.content:
         response = ("Pahie...")
         await message.channel.send(response)
 
+    #
+    # bot tells "story"
+    #
     if "pahie" and "story" in message.content:
 
         def getSentence():
