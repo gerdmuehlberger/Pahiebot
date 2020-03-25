@@ -37,15 +37,17 @@ async def on_ready():
 #
 @bot.command(pass_context=True)
 async def summonpahie(ctx):
-    global voice
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
-
-    if voice and voice.is_connected():
-        await voice.move_to(channel)
-    else:
-        voice = await channel.connect()
-    await ctx.send(f'Pahie joined {channel}')
+    try:
+        global voice
+        channel = ctx.message.author.voice.channel
+        voice = get(bot.voice_clients, guild=ctx.guild)
+        if voice and voice.is_connected():
+            await voice.move_to(channel)
+        else:
+            voice = await channel.connect()
+        await ctx.send(f'Pahie joined {channel}')
+    except AttributeError:
+        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
 
 
 #
@@ -53,16 +55,19 @@ async def summonpahie(ctx):
 #
 @bot.command(pass_context=True)
 async def kickpahie(ctx):
-    channel = ctx.message.author.voice.channel
-    voice = get(bot.voice_clients, guild=ctx.guild)
+    try:
+        channel = ctx.message.author.voice.channel
+        voice = get(bot.voice_clients, guild=ctx.guild)
 
-    if voice and voice.is_connected():
-        await voice.disconnect()
-        print(f'Bot left {channel}')
-        await ctx.send(f'Pahie left {channel}')
-    else:
-        print("bot was told to leave but wasnt in one...")
-        await ctx.send("Pahie could'nt be found in any voice channel...")
+        if voice and voice.is_connected():
+            await voice.disconnect()
+            print(f'Bot left {channel}')
+            await ctx.send(f'Pahie left {channel}')
+        else:
+            print("bot was told to leave but wasnt in one...")
+            await ctx.send("Pahie could'nt be found in any voice channel...")
+    except AttributeError:
+        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
 
 #
 # send list of available commands to textchat
@@ -109,23 +114,27 @@ async def on_message(message):
 # play random spongebob quote
 #
 @bot.command(pass_context=True)
+
 async def bobquote(ctx):
-
     try:
-        voice = get(bot.voice_clients, guild=ctx.guild)
-        if voice is not None:
-            rand_number = random.randint(1, 21)
+        try:
+            voice = get(bot.voice_clients, guild=ctx.guild)
+            if voice is not None:
+                rand_number = random.randint(1, 21)
 
-            voice.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print("finished playing quote."))
-            voice.source = discord.PCMVolumeTransformer(voice.source)
-            voice.source.volume = 0.07
-        else:
-            await ctx.send("Pahie is not here!")
+                voice.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print("finished playing quote."))
+                voice.source = discord.PCMVolumeTransformer(voice.source)
+                voice.source.volume = 0.07
+            else:
+                await ctx.send("Pahie is not here!")
 
-    except Exception as e:
-        print(e)
-        await ctx.send("Wait until the current quote is finished!")
-        return
+        except Exception as e:
+            print(e)
+            await ctx.send("Wait until the current quote is finished!")
+            return
+    except AttributeError:
+        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author,
+                                                                                        ctx.message.content))
 
 #######################################################################
 ####################      STORY SECTION     ###########################
