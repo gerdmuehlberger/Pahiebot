@@ -59,7 +59,7 @@ async def kickpahie(ctx):
     if voice and voice.is_connected():
         await voice.disconnect()
         print(f'Bot left {channel}')
-        await ctx.send(f'Pahie is pissed and left {channel}')
+        await ctx.send(f'Pahie left {channel}')
     else:
         print("bot was told to leave but wasnt in one...")
         await ctx.send("Pahie could'nt be found in any voice channel...")
