@@ -1,2 +1,2 @@
 # Pahiebot
-pahie...
+Personal Bot for discord server.
