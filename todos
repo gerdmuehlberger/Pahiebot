@@ -1,12 +1,12 @@
 Functionalities to be added:
 
-- connect bot to a database 
-(so certain infos can be stored over a longer period of time)
+- automatically insert users not registered into db
+
+- add secrets file to gitignore
 
 - !watch2gether: open a watch2getherroom
 
 - !hotmemes: fetches a meme thats on hot on a meme subreddit
-
 
 
 IDEAS: 
