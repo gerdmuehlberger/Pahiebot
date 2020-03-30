@@ -104,5 +104,8 @@ venv.bak/
 #config files
 /config/*
 
+# ignore idea folder from intellij
+.idea/
+
 # mypy
 .mypy_cache/
