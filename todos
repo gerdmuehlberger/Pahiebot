@@ -1,10 +1,7 @@
 Functionalities to be added:
 
 - automatically insert users not registered into db
-
-- add secrets file to gitignore
-
-- !watch2gether: open a watch2getherroom
+	- keep in mind that users can change usernames and should be updated in 	  the db too
 
 - !hotmemes: fetches a meme thats on hot on a meme subreddit
 

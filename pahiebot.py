@@ -69,6 +69,15 @@ async def kickpahie(ctx):
     except AttributeError:
         print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
 
+
+#
+# create a watch2gether room
+#
+@bot.command(pass_context=True)
+async def w2g(ctx):
+    await ctx.send("https://www.watch2gether.com/rooms/zuckerimkaffee-d9d68w37fb6sr2ir35?lang=de")
+
+
 #
 # send list of available commands to textchat
 #
@@ -77,6 +86,7 @@ async def helpmepahie(ctx):
     await ctx.send("!summonpahie: summons Pahie into your channel.\n"
                    "!kickpahie: kicks Pahie out of your channel.\n"
                    "!bobquote: Pahie plays Spongebobquote (Requires summoning to a channel first). \n"
+                   "!w2g: sends a watch2gether room. \n"
                    )
 
 
@@ -104,6 +114,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!bobquote'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!w2g'):
         await bot.process_commands(message)
 
 
