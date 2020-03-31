@@ -5,6 +5,9 @@ Functionalities to be added:
 
 - !hotmemes: fetches a meme thats on hot on a meme subreddit
 
+- there seems to be an issue with the !bobquote command
+	- it always prints "wait until current quote..."
+	- console log is ffmpeg not found
 
 IDEAS: 
 
