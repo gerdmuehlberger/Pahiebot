@@ -5,9 +5,12 @@ Functionalities to be added:
 
 - !hotmemes: fetches a meme thats on hot on a meme subreddit
 
+
 - there seems to be an issue with the !bobquote command
-	- it always prints "wait until current quote..."
-	- console log is ffmpeg not found
+	-this issue has been fixed, it has todo with ffmpeg not being installed on the machine that the bot is running:
+	-keep in mind for real hosting on raspberry! (ffmpeg has to be installed in order to play soundfiles!)
+
+- implement proper error handling for the bobquote function
 
 IDEAS: 
 

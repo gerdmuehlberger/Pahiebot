@@ -11,7 +11,7 @@ import youtube_dl
 
 currentWorkingDirectory = Path(__file__).parents[0]
 currentWorkingDirectory = str(currentWorkingDirectory)
-print(currentWorkingDirectory)
+print("Working directory: ", currentWorkingDirectory)
 
 # Authorization
 secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
@@ -135,6 +135,8 @@ async def bobquote(ctx):
             if voice is not None:
                 rand_number = random.randint(1, 21)
 
+                print("wd = ", currentWorkingDirectory)
+
                 voice.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print("finished playing quote."))
                 voice.source = discord.PCMVolumeTransformer(voice.source)
                 voice.source.volume = 0.07
@@ -143,7 +145,8 @@ async def bobquote(ctx):
 
         except Exception as e:
             print(e)
-            await ctx.send("Wait until the current quote is finished!")
+
+            await ctx.send("Could not play a bobquote!")
             return
     except AttributeError:
         print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author,
