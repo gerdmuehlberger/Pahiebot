@@ -2,10 +2,10 @@
 
 Personal Bot for discord server.
 
-##Requirements:
-###System:
+## Requirements:
+### System:
 -ffmpeg (playing audio files via discord funcs)
-###Python:
+### Python:
 - discord
 - discord-py
 - praw (reddit connector)
