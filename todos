@@ -5,12 +5,31 @@ Functionalities to be added:
 
 - !hotmemes: fetches a meme thats on hot on a meme subreddit
 
+- create some funny pahie pics in photoshop and add a command to fetch
+  a random funny pahie pic
+
+
+
 
 - there seems to be an issue with the !bobquote command
 	-this issue has been fixed, it has todo with ffmpeg not being installed on the machine that the bot is running:
 	-keep in mind for real hosting on raspberry! (ffmpeg has to be installed in order to play soundfiles!)
 
-- implement proper error handling for the bobquote function
+
+
+
+
+
+
+- MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
+
+- MINOR ISSUE edit the messages which get returned in discord to something that makes more sense.
+
+
+
+- OPTIMISATION comment out/refactor the whole bobquote section so it makes more sense
+
+
 
 IDEAS: 
 

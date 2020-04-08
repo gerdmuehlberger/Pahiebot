@@ -17,7 +17,9 @@ print("Working directory: ", currentWorkingDirectory)
 secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
 bot = commands.Bot(command_prefix='!', case_insensitive=True)
 bot.config_token = secretFile['token']
-logging.basicConfig(level=logging.INFO)
+
+#activate discord logs by uncommenting this
+#logging.basicConfig(level=logging.INFO)
 
 
 #
@@ -29,7 +31,7 @@ async def on_ready():
 
 
 #######################################################################
-###############     COMMANDS SECTION     ##############################
+###############     BASIC COMMANDS SECTION     ########################
 #######################################################################
 
 #
@@ -91,7 +93,7 @@ async def helpmepahie(ctx):
 
 
 #######################################################################
-##################     MESSAGING SECTION     ##########################
+##################     COMMAND PROCESSING SECTION     #################
 #######################################################################
 
 @bot.event
@@ -129,28 +131,41 @@ async def on_message(message):
 @bot.command(pass_context=True)
 
 async def bobquote(ctx):
+
     try:
+
+        channelNameOfMessageAuthor = ctx.message.author.voice.channel;
+        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
+
         try:
-            voice = get(bot.voice_clients, guild=ctx.guild)
-            if voice is not None:
-                rand_number = random.randint(1, 21)
 
-                print("wd = ", currentWorkingDirectory)
+            botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
+            commandAuthor = str(ctx.message.author).split('#')[0];
 
-                voice.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print("finished playing quote."))
-                voice.source = discord.PCMVolumeTransformer(voice.source)
-                voice.source.volume = 0.07
+            if channelNameOfMessageAuthor == channelNameOfBotConnection:
+
+                if botVoiceObject is not None:
+                    rand_number = random.randint(1, 21)
+                    botVoiceObject.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print(f"finished playing quote #{rand_number}."))
+                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                    botVoiceObject.source.volume = 0.07
+
+                else:
+                    await ctx.send("Pahie is not here!")
+
             else:
-                await ctx.send("Pahie is not here!")
+                await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
 
         except Exception as e:
-            print(e)
 
-            await ctx.send("Could not play a bobquote!")
+            print("function !bobquote could not be executed because: ", e)
+
+            await ctx.send(f"Pahie is already playing a bobquote!")
             return
+
     except AttributeError:
-        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author,
-                                                                                        ctx.message.content))
+        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
+        await ctx.send("Pahie could not be found in any channel.")
 
 #######################################################################
 ####################      STORY SECTION     ###########################
