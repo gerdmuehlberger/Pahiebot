@@ -8,10 +8,18 @@ import json
 import logging
 import time
 import youtube_dl
+import praw
+import itertools
+
+
+#######################################################################
+#################     GENERAL SETUP     ###############################
+#######################################################################
 
 currentWorkingDirectory = Path(__file__).parents[0]
 currentWorkingDirectory = str(currentWorkingDirectory)
 print("Working directory: ", currentWorkingDirectory)
+
 
 # Authorization
 secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
@@ -29,6 +37,31 @@ bot.config_token = secretFile['token']
 async def on_ready():
     print(f'{bot.user} has connected! id={bot.user.id}')
 
+
+#######################################################################
+###############     REDDIT CONNECTOR     ##############################
+#######################################################################
+
+secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
+
+use_script=secretFile['use_script']
+client_secret=secretFile['client_secret']
+user_agent=secretFile['user_agent']
+username=secretFile['username']
+password=secretFile['password']
+
+
+try:
+    reddit = praw.Reddit(client_id=use_script,
+                         client_secret=client_secret,
+                         user_agent=user_agent,
+                         username=username,
+                         password=password)
+
+    print(f"reddit loggin successful.")
+
+except Exception as e:
+    print(f"error on reddit loggin: {e}")
 
 #######################################################################
 ###############     BASIC COMMANDS SECTION     ########################
@@ -89,37 +122,9 @@ async def helpmepahie(ctx):
                    "!kickpahie: kicks Pahie out of your channel.\n"
                    "!bobquote: Pahie plays Spongebobquote (Requires summoning to a channel first). \n"
                    "!w2g: sends a watch2gether room. \n"
+                  # "!dankmeme: sends a random dank meme thats hot on reddit. \n"
                    )
 
-
-#######################################################################
-##################     COMMAND PROCESSING SECTION     #################
-#######################################################################
-
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return "pahie..."
-
-    #
-    # this fixes the command issue, its just a quickfix though.
-    # one needs to escape commands from the on_message function, surely theres a better way than this...
-    # bug : https://stackoverflow.com/questions/49331096/why-does-on-message-stop-commands-from-working
-    #
-    if message.content.startswith('!summonpahie'):
-        await bot.process_commands(message)
-
-    if message.content.startswith('!kickpahie'):
-        await bot.process_commands(message)
-
-    if message.content.startswith('!helpmepahie'):
-        await bot.process_commands(message)
-
-    if message.content.startswith('!bobquote'):
-        await bot.process_commands(message)
-
-    if message.content.startswith('!w2g'):
-        await bot.process_commands(message)
 
 
 #######################################################################
@@ -167,13 +172,71 @@ async def bobquote(ctx):
         print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
         await ctx.send("Pahie could not be found in any channel.")
 
+
 #######################################################################
-####################      STORY SECTION     ###########################
+####################      REDDIT API SECTION     ######################
 #######################################################################
+
+#
+# send random top post of dankmemes subreddit
+#
+#NOTE: surely there is a better way to select a random index of a generator object in python.
+#
+#
+@bot.command(pass_context=True)
+async def dankmeme(ctx):
+    try:
+        randNumber = random.randint(0, 14)
+        subRedditObject = reddit.subreddit("dankmemes")
+        topPostsOfsubRedditObject = subRedditObject.hot(limit=15)
+        URLSofPosts = []
+        for i in topPostsOfsubRedditObject:
+            URLSofPosts.append(i.url)
+
+        randomlyChosenMeme = URLSofPosts[randNumber]
+        await ctx.send(randomlyChosenMeme)
+
+    except Exception as e:
+        print(f"could not run !dankmeme command: {e}")
+        await  ctx.send("Could not fetch a meme!")
 
 
 #######################################################################
 ###################      LEVELING SECTION     #########################
 #######################################################################
+
+
+#######################################################################
+##################     COMMAND PROCESSING SECTION     #################
+#######################################################################
+
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return "pahie..."
+
+    #
+    # this fixes the command issue, its just a quickfix though.
+    # one needs to escape commands from the on_message function, surely theres a better way than this...
+    # bug : https://stackoverflow.com/questions/49331096/why-does-on-message-stop-commands-from-working
+    #
+    if message.content.startswith('!summonpahie'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!kickpahie'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!helpmepahie'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!bobquote'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!w2g'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!dankmeme'):
+        await bot.process_commands(message)
+
 
 bot.run(bot.config_token)
