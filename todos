@@ -3,17 +3,14 @@ Functionalities to be added:
 - automatically insert users not registered into db
 	- keep in mind that users can change usernames and should be updated in 	  the db too
 
-- !hotmemes: fetches a meme thats on hot on a meme subreddit
 
 - create some funny pahie pics in photoshop and add a command to fetch
-  a random funny pahie pic
+  a random funny pahie pic (!turnmeonpahie command)
 
 - record some random ingame comments for each game for a future feature which enables ingame trolling
 	
 	- add a command like !troll[NAME OF GAME] and let pahie play a random 
 	ingame call of that game so players will think the call is real
-
-
 
 
 - there seems to be an issue with the !bobquote command

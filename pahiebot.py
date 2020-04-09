@@ -186,20 +186,68 @@ async def bobquote(ctx):
 @bot.command(pass_context=True)
 async def dankmeme(ctx):
     try:
-        randNumber = random.randint(0, 14)
-        subRedditObject = reddit.subreddit("dankmemes")
+
+        subreddits = ["memes", "dankmemes", "DeepFriedMemes"]
+        randNumberSubreddit = random.randint(0,2)
+        randNumberMeme = random.randint(2, 14)
+        subRedditObject = reddit.subreddit(subreddits[randNumberSubreddit])
         topPostsOfsubRedditObject = subRedditObject.hot(limit=15)
         URLSofPosts = []
         for i in topPostsOfsubRedditObject:
             URLSofPosts.append(i.url)
 
-        randomlyChosenMeme = URLSofPosts[randNumber]
+        randomlyChosenMeme = URLSofPosts[randNumberMeme]
         await ctx.send(randomlyChosenMeme)
 
     except Exception as e:
         print(f"could not run !dankmeme command: {e}")
         await  ctx.send("Could not fetch a meme!")
 
+
+#######################################################################
+###################  MINIGAME COMMANDS SECTION     ####################
+#######################################################################
+
+#
+# dick measurement contest:
+# needs errorhandling implemented
+#
+@bot.command(pass_context=True)
+async def dmc(ctx, *args):
+    try:
+        # return type of args = tuple
+        auxillaryListArgs = list(args)
+        randomLengthsList = []
+        dmcWinnerDict = {}
+
+        if len(args) <= 1:
+            await ctx.send("Please enter more than 1 participants for the dick measurement contest!")
+
+        elif 2 <= len(args) <= 20:
+
+            while len(randomLengthsList) < len(args):
+                tempRandomNum = random.randint(1,22)
+                if tempRandomNum not in randomLengthsList:
+                    randomLengthsList.append(tempRandomNum)
+                else:
+                    pass
+
+            randomLengthsList.sort(reverse=True)
+
+            for i in range(0, len(args)):
+                loopWinner = random.choice(auxillaryListArgs)
+
+                auxillaryListArgs.remove(loopWinner)
+
+                dmcWinnerDict.update({loopWinner: f"8{randomLengthsList[i] * '='}D"})
+
+            await ctx.send("\n".join("{}:\t{}".format(k, v) for k, v in dmcWinnerDict.items()))
+
+        else:
+            await ctx.send("too many participants for a dickmeasurement contest! Pahie can only count up to 20")
+
+    except Exception as e:
+        print(f"could not run !dmc command: {e}")
 
 #######################################################################
 ###################      LEVELING SECTION     #########################
@@ -236,6 +284,10 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!dankmeme'):
+        await bot.process_commands(message)
+
+
+    if message.content.startswith('!dmc'):
         await bot.process_commands(message)
 
 
