@@ -8,7 +8,9 @@ Personal Bot for discord server.
 ### Python:
 - discord
 - discord-py
+- pyNaCl
 - praw (reddit connector)
+
 
 - json 
 - random
