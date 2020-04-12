@@ -91,19 +91,28 @@ async def summonpahie(ctx):
 @bot.command(pass_context=True)
 async def kickpahie(ctx):
     try:
-        channel = ctx.message.author.voice.channel
-        voice = get(bot.voice_clients, guild=ctx.guild)
+        channelNameOfMessageAuthor = ctx.message.author.voice.channel;
+        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
 
-        if voice and voice.is_connected():
-            await voice.disconnect()
-            print(f'Bot left {channel}')
-            await ctx.send(f'Pahie left {channel}')
+        if channelNameOfMessageAuthor == channelNameOfBotConnection:
+            try:
+                channel = ctx.message.author.voice.channel
+                voice = get(bot.voice_clients, guild=ctx.guild)
+
+                if voice and voice.is_connected():
+                    await voice.disconnect()
+                    print(f'Bot left {channel}')
+                    await ctx.send(f'Pahie left {channel}')
+                else:
+                    print("bot was told to leave but wasnt in one...")
+                    await ctx.send("Pahie could'nt be found in any voice channel...")
+            except AttributeError:
+                print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
+                
         else:
-            print("bot was told to leave but wasnt in one...")
-            await ctx.send("Pahie could'nt be found in any voice channel...")
-    except AttributeError:
+            await ctx.send("You can't kick Pahie if youre not in the same channel as him...")
+    except Exception as e:
         print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
-
 
 #
 # create a watch2gether room
@@ -118,11 +127,13 @@ async def w2g(ctx):
 #
 @bot.command(pass_context=True)
 async def helpmepahie(ctx):
-    await ctx.send("!summonpahie: summons Pahie into your channel.\n"
-                   "!kickpahie: kicks Pahie out of your channel.\n"
+    await ctx.send("!summonpahie: summon Pahie into your channel.\n"
+                   "!kickpahie: kick Pahie out of your channel.\n"
                    "!bobquote: Pahie plays Spongebobquote (Requires summoning to a channel first). \n"
-                   "!w2g: sends a watch2gether room. \n"
-                  # "!dankmeme: sends a random dank meme thats hot on reddit. \n"
+                   "!w2g: Pahie sends a watch2gether room. \n"
+                   "!dankmeme: Pahie sends a random dank meme thats hot on reddit. \n"
+                   "!dmc names: Pahie starts a dickmeasurement-contest with all the names passed to the command. "
+                   "(Example: !dmc tick trick track) \n"
                    )
 
 
@@ -285,7 +296,6 @@ async def on_message(message):
 
     if message.content.startswith('!dankmeme'):
         await bot.process_commands(message)
-
 
     if message.content.startswith('!dmc'):
         await bot.process_commands(message)
