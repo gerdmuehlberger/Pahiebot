@@ -31,7 +31,7 @@ Functionalities to be added:
 
 
 - OPTIMISATION comment out/refactor the whole bobquote section so it makes more sense
-
+- OPTIMISATION add better return messages of the bot (e.g. include username)
 
 
 IDEAS: 

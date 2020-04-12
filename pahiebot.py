@@ -108,7 +108,7 @@ async def kickpahie(ctx):
                     await ctx.send("Pahie could'nt be found in any voice channel...")
             except AttributeError:
                 print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
-                
+
         else:
             await ctx.send("You can't kick Pahie if youre not in the same channel as him...")
     except Exception as e:
@@ -116,6 +116,7 @@ async def kickpahie(ctx):
 
 #
 # create a watch2gether room
+# extend this so users can choose between room 1-3 in case more rooms are needed
 #
 @bot.command(pass_context=True)
 async def w2g(ctx):
@@ -123,17 +124,26 @@ async def w2g(ctx):
 
 
 #
+# Post link to a skrbbl.io room
+#
+@bot.command(pass_context=True)
+async def skrbl(ctx):
+    await ctx.send("https://skribbl.io/")
+
+
+#
 # send list of available commands to textchat
 #
 @bot.command(pass_context=True)
 async def helpmepahie(ctx):
-    await ctx.send("!summonpahie: summon Pahie into your channel.\n"
-                   "!kickpahie: kick Pahie out of your channel.\n"
-                   "!bobquote: Pahie plays Spongebobquote (Requires summoning to a channel first). \n"
-                   "!w2g: Pahie sends a watch2gether room. \n"
-                   "!dankmeme: Pahie sends a random dank meme thats hot on reddit. \n"
-                   "!dmc names: Pahie starts a dickmeasurement-contest with all the names passed to the command. "
-                   "(Example: !dmc tick trick track) \n"
+    await ctx.send("**!summonpahie:**\n Summon Pahie into your channel.\n\n"
+                   "**!kickpahie:**\n Kick Pahie out of your channel.\n\n"
+                   "**!bobquote:**\n Pahie plays Spongebobquote (Requires summoning to a channel first). \n\n"
+                   "**!w2g:**\n Pahie sends a watch2gether room. \n\n"
+                   "**!dankmeme:**\n Pahie sends a random dank meme thats hot on reddit. \n\n"
+                   "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
+                   "(Example: !dmc tick trick track) \n\n"
+                   "**!skrbl:**\n Pahie sends link to skrbbl.io. \n\n"
                    )
 
 
@@ -221,7 +231,7 @@ async def dankmeme(ctx):
 
 #
 # dick measurement contest:
-# needs errorhandling implemented
+# needs doublecheck fpr errorhandling implemented
 #
 @bot.command(pass_context=True)
 async def dmc(ctx, *args):
@@ -259,6 +269,9 @@ async def dmc(ctx, *args):
 
     except Exception as e:
         print(f"could not run !dmc command: {e}")
+
+
+
 
 #######################################################################
 ###################      LEVELING SECTION     #########################
@@ -298,6 +311,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!dmc'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!skrbl'):
         await bot.process_commands(message)
 
 
