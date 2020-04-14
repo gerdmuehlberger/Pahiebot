@@ -1,5 +1,3 @@
-Functionalities to be added:
-
 - automatically insert users not registered into db
 	- keep in mind that users can change usernames and should be updated in 	  the db too
 
@@ -12,15 +10,6 @@ Functionalities to be added:
 	
 	- add a command like !troll[NAME OF GAME] and let pahie play a random 
 	ingame call of that game so players will think the call is real
-
-
-- there seems to be an issue with the !bobquote command
-	-this issue has been fixed, it has todo with ffmpeg not being installed on the machine that the bot is running:
-	-keep in mind for real hosting on raspberry! (ffmpeg has to be installed in order to play soundfiles!)
-
-
-
-
 
 
 
