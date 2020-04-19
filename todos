@@ -1,9 +1,7 @@
 Functionalities to be added:
 
 - automatically insert users not registered into db
-	- keep in mind that users can change usernames and should be updated in 	  the db too
 
-- create a function to create a scribble.io room for n amount of people.
 
 - create some funny pahie pics in photoshop and add a command to fetch
   a random funny pahie pic (!turnmeonpahie command)
@@ -22,6 +20,7 @@ Functionalities to be added:
 
 
 
+- ISSUE any command can be run with a message appended atm. this shouldnt be the case (e.g. !summonpahie asdf fdsa works, while it shouldnt)
 
 
 - MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
@@ -32,6 +31,8 @@ Functionalities to be added:
 
 - OPTIMISATION comment out/refactor the whole bobquote section so it makes more sense
 - OPTIMISATION add better return messages of the bot (e.g. include username)
+- OPTIMISATION the reddit meme function runs kinda slow and can be optimised
+
 
 
 IDEAS: 
