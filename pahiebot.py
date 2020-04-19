@@ -82,7 +82,8 @@ async def summonpahie(ctx):
             voice = await channel.connect()
         await ctx.send(f'Pahie joined {channel}')
     except AttributeError:
-        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
+        await ctx.send("You need to be in a voicechannel to be able to summon Pahie!")
+        print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
 
 
 #
@@ -112,7 +113,8 @@ async def kickpahie(ctx):
         else:
             await ctx.send("You can't kick Pahie if youre not in the same channel as him...")
     except Exception as e:
-        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
+        await ctx.send("Pahie is not here!")
+        print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
 
 #
 # create a watch2gether room
@@ -204,6 +206,7 @@ async def bobquote(ctx):
 #NOTE: surely there is a better way to select a random index of a generator object in python.
 #
 #
+
 @bot.command(pass_context=True)
 async def dankmeme(ctx):
     try:
@@ -292,29 +295,31 @@ async def on_message(message):
     # one needs to escape commands from the on_message function, surely theres a better way than this...
     # bug : https://stackoverflow.com/questions/49331096/why-does-on-message-stop-commands-from-working
     #
-    if message.content.startswith('!summonpahie'):
+    if message.content == '!summonpahie':
         await bot.process_commands(message)
 
-    if message.content.startswith('!kickpahie'):
+    if message.content == '!kickpahie':
         await bot.process_commands(message)
 
-    if message.content.startswith('!helpmepahie'):
+    if message.content == '!helpmepahie':
         await bot.process_commands(message)
 
-    if message.content.startswith('!bobquote'):
+    if message.content == '!bobquote':
         await bot.process_commands(message)
 
-    if message.content.startswith('!w2g'):
+    if message.content == '!w2g':
         await bot.process_commands(message)
 
-    if message.content.startswith('!dankmeme'):
+    if message.content == '!dankmeme':
+        await bot.process_commands(message)
+
+    if message.content == '!skrbl':
         await bot.process_commands(message)
 
     if message.content.startswith('!dmc'):
         await bot.process_commands(message)
 
-    if message.content.startswith('!skrbl'):
-        await bot.process_commands(message)
+
 
 
 bot.run(bot.config_token)

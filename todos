@@ -1,5 +1,3 @@
-Functionalities to be added:
-
 - automatically insert users not registered into db
 
 
@@ -12,6 +10,7 @@ Functionalities to be added:
 	ingame call of that game so players will think the call is real
 
 
+<<<<<<< HEAD
 - there seems to be an issue with the !bobquote command
 	-this issue has been fixed, it has todo with ffmpeg not being installed on the machine that the bot is running:
 	-keep in mind for real hosting on raspberry! (ffmpeg has to be installed in order to play soundfiles!)
@@ -22,6 +21,8 @@ Functionalities to be added:
 
 - ISSUE any command can be run with a message appended atm. this shouldnt be the case (e.g. !summonpahie asdf fdsa works, while it shouldnt)
 
+=======
+>>>>>>> 9c96e86c8a1c1002b20030ef55b6749ae2982793
 
 - MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
 
