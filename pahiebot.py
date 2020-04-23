@@ -1,4 +1,5 @@
 import os
+from os import listdir
 import discord
 from discord.ext import commands
 from discord.utils import get
@@ -66,6 +67,11 @@ except Exception as e:
 #######################################################################
 ###############     BASIC COMMANDS SECTION     ########################
 #######################################################################
+
+
+#
+# implement a sneak into channel funciton here (if possible somehow)
+#
 
 #
 # let the bot join the voice channel of the user who called it.
@@ -196,6 +202,76 @@ async def bobquote(ctx):
         await ctx.send("Pahie could not be found in any channel.")
 
 
+#
+# Pahie trolls ingame
+#
+
+@bot.command(pass_context=True)
+async def troll(ctx, user, game):
+
+    try:
+
+        channelNameOfMessageAuthor = ctx.message.author.voice.channel;
+        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
+
+        print(f"game:{game}, user:{user}")
+        print(f"author:{channelNameOfMessageAuthor}, bot:{channelNameOfBotConnection}")
+
+        try:
+            botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
+            commandAuthor = str(ctx.message.author).split('#')[0];
+
+            if channelNameOfMessageAuthor == channelNameOfBotConnection:
+
+
+                trollFilePath = f"trollfiles/{game}"
+
+
+                if os.path.exists(trollFilePath) is True:
+                    listOfFilesInTrollFilePath = (listdir(trollFilePath))
+
+                    listOfAvailableFilesForName = []
+
+                    for fileName in listOfFilesInTrollFilePath:
+                        if user in fileName:
+                            listOfAvailableFilesForName.append(fileName)
+                        else:
+                            pass
+
+                    if len(listOfAvailableFilesForName) == 0:
+                        await ctx.send(f"{user} is immune to Pahie's trolling abilities for the game {game}! Maybe try for another game!")
+                    else:
+                        randomSoundFile = random.choice(listOfAvailableFilesForName)
+                        botVoiceObject.play(discord.FFmpegPCMAudio(trollFilePath + "/" + randomSoundFile),
+                                            after=lambda e: print(f"Pahie trolled {user} in the game {game}."))
+                        botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                        botVoiceObject.source.volume = 0.12
+
+                else:
+                    inputErrorCheck = f"trollfiles/{user}"
+                    if os.path.exists(inputErrorCheck):
+                        await ctx.send(f"Pahie thinks you switched the argument order! Could it be that you ment to write: \'!troll {game} {user}\'?")
+                    else:
+                        await ctx.send("Please pick a game Pahie knows! (wow, csgo)")
+
+            else:
+                print("user not in the same channel as the bot.")
+
+
+        except Exception as e:
+            print(f"error occured: {e}")
+
+
+    except Exception as e:
+        print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
+        print(f"Exception: {e}")
+        await ctx.send("Pahie needs to be in a voicechannel to troll somebody.")
+
+    except AttributeError as ae:
+        print(f"e: {ae}")
+        await ctx.send("Oops, Pahie could not troll.")
+
+
 #######################################################################
 ####################      REDDIT API SECTION     ######################
 #######################################################################
@@ -268,7 +344,7 @@ async def dmc(ctx, *args):
             await ctx.send("\n".join("{}:\t{}".format(k, v) for k, v in dmcWinnerDict.items()))
 
         else:
-            await ctx.send("too many participants for a dickmeasurement contest! Pahie can only count up to 20")
+            await ctx.send("Too many participants for a dickmeasurement contest! Pahie can only count up to 20")
 
     except Exception as e:
         print(f"could not run !dmc command: {e}")
@@ -317,6 +393,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!dmc'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!troll'):
         await bot.process_commands(message)
 
 
