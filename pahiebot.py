@@ -91,6 +91,43 @@ async def summonpahie(ctx):
         await ctx.send("You need to be in a voicechannel to be able to summon Pahie!")
         print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
 
+#
+# let the bot join a voice channel of the users choice
+#
+@bot.command(pass_context=True)
+async def sendpahie(ctx, channelname):
+    try:
+
+        voicechannels = ctx.guild.voice_channels
+        channelToSendBotTo = None
+
+        for channel in voicechannels:
+            if channel.name == channelname:
+                channelToSendBotTo = channel
+
+
+        if channelToSendBotTo != None:
+            print(f"geht: {channelToSendBotTo}")
+
+            try:
+                global voice
+                channel = channelToSendBotTo
+                voice = get(bot.voice_clients, guild=ctx.guild)
+                if voice and voice.is_connected():
+                    await voice.move_to(channel)
+                else:
+                    voice = await channel.connect()
+                await ctx.send(f'Pahie joined {channel}')
+
+            except AttributeError:
+                await ctx.send("You need to be in a voicechannel to be able to summon Pahie!")
+
+        else:
+            await ctx.send(f"There is no voicechannel called \'{channelname}\' on this server!")
+
+    except AttributeError:
+        print("didnt work.")
+
 
 #
 # send the bot out of the voice channel
@@ -372,6 +409,9 @@ async def on_message(message):
     # bug : https://stackoverflow.com/questions/49331096/why-does-on-message-stop-commands-from-working
     #
     if message.content == '!summonpahie':
+        await bot.process_commands(message)
+
+    if message.content.startswith('!sendpahie'):
         await bot.process_commands(message)
 
     if message.content == '!kickpahie':
