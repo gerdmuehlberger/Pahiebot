@@ -96,8 +96,8 @@ async def summonpahie(ctx):
 #
 @bot.command(pass_context=True)
 async def sendpahie(ctx, channelname):
-    try:
 
+    try:
         voicechannels = ctx.guild.voice_channels
         channelToSendBotTo = None
 
@@ -105,10 +105,7 @@ async def sendpahie(ctx, channelname):
             if channel.name == channelname:
                 channelToSendBotTo = channel
 
-
         if channelToSendBotTo != None:
-            print(f"geht: {channelToSendBotTo}")
-
             try:
                 global voice
                 channel = channelToSendBotTo
@@ -120,7 +117,7 @@ async def sendpahie(ctx, channelname):
                 await ctx.send(f'Pahie joined {channel}')
 
             except AttributeError:
-                await ctx.send("You need to be in a voicechannel to be able to summon Pahie!")
+                await ctx.send("Could not send Pahie!")
 
         else:
             await ctx.send(f"There is no voicechannel called \'{channelname}\' on this server!")
@@ -136,28 +133,38 @@ async def sendpahie(ctx, channelname):
 async def kickpahie(ctx):
     try:
         channelNameOfMessageAuthor = ctx.message.author.voice.channel;
-        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
 
-        if channelNameOfMessageAuthor == channelNameOfBotConnection:
-            try:
-                channel = ctx.message.author.voice.channel
-                voice = get(bot.voice_clients, guild=ctx.guild)
+        try:
+            channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
 
-                if voice and voice.is_connected():
-                    await voice.disconnect()
-                    print(f'Bot left {channel}')
-                    await ctx.send(f'Pahie left {channel}')
-                else:
-                    print("bot was told to leave but wasnt in one...")
-                    await ctx.send("Pahie could'nt be found in any voice channel...")
-            except AttributeError:
-                print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
+            if channelNameOfMessageAuthor == channelNameOfBotConnection:
+                try:
+                    channel = ctx.message.author.voice.channel
+                    voice = get(bot.voice_clients, guild=ctx.guild)
 
-        else:
-            await ctx.send("You can't kick Pahie if youre not in the same channel as him...")
+                    if voice and voice.is_connected():
+                        await voice.disconnect()
+                        print(f'Bot left {channel}')
+                        await ctx.send(f'Pahie left {channel}')
+                    else:
+                        print("bot was told to leave but wasnt in one...")
+                        await ctx.send("Pahie could'nt be found in any voice channel...")
+                except AttributeError:
+                    print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
+
+            else:
+                await ctx.send("You can't kick Pahie if youre not in the same channel as him...")
+
+        except Exception as e:
+            await ctx.send("Pahie could not be found in any channel!")
+            print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
+            print(f"error raised by kickfunction: {e}")
+
+
     except Exception as e:
-        await ctx.send("Pahie is not here!")
+        await ctx.send("You need to be on the Server to be able to kick Pahie!")
         print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
+        print(f"error raised by kickfunction: {e}")
 
 #
 # create a watch2gether room
@@ -228,11 +235,8 @@ async def bobquote(ctx):
                 await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
 
         except Exception as e:
-
             print("function !bobquote could not be executed because: ", e)
-
             await ctx.send(f"Pahie is already playing a bobquote!")
-            return
 
     except AttributeError:
         print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
@@ -247,52 +251,39 @@ async def bobquote(ctx):
 async def troll(ctx, user, game):
 
     try:
-
-        channelNameOfMessageAuthor = ctx.message.author.voice.channel;
         channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
-
-        print(f"game:{game}, user:{user}")
-        print(f"author:{channelNameOfMessageAuthor}, bot:{channelNameOfBotConnection}")
 
         try:
             botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
-            commandAuthor = str(ctx.message.author).split('#')[0];
-
-            if channelNameOfMessageAuthor == channelNameOfBotConnection:
-
-
-                trollFilePath = f"trollfiles/{game}"
+            #commandAuthor = str(ctx.message.author).split('#')[0];
+            trollFilePath = f"trollfiles/{game}"
 
 
-                if os.path.exists(trollFilePath) is True:
-                    listOfFilesInTrollFilePath = (listdir(trollFilePath))
+            if os.path.exists(trollFilePath) is True:
+                listOfFilesInTrollFilePath = (listdir(trollFilePath))
 
-                    listOfAvailableFilesForName = []
+                listOfAvailableFilesForName = []
 
-                    for fileName in listOfFilesInTrollFilePath:
-                        if user in fileName:
-                            listOfAvailableFilesForName.append(fileName)
-                        else:
-                            pass
+                for fileName in listOfFilesInTrollFilePath:
+                    if user in fileName:
+                        listOfAvailableFilesForName.append(fileName)
 
-                    if len(listOfAvailableFilesForName) == 0:
-                        await ctx.send(f"{user} is immune to Pahie's trolling abilities for the game {game}! Maybe try for another game!")
-                    else:
-                        randomSoundFile = random.choice(listOfAvailableFilesForName)
-                        botVoiceObject.play(discord.FFmpegPCMAudio(trollFilePath + "/" + randomSoundFile),
-                                            after=lambda e: print(f"Pahie trolled {user} in the game {game}."))
-                        botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                        botVoiceObject.source.volume = 0.12
-
+                if len(listOfAvailableFilesForName) == 0:
+                    await ctx.send(f"{user} is immune to Pahie's trolling abilities for the game {game}! Maybe try for another game!")
                 else:
-                    inputErrorCheck = f"trollfiles/{user}"
-                    if os.path.exists(inputErrorCheck):
-                        await ctx.send(f"Pahie thinks you switched the argument order! Could it be that you ment to write: \'!troll {game} {user}\'?")
-                    else:
-                        await ctx.send("Please pick a game Pahie knows! (wow, csgo)")
+                    randomSoundFile = random.choice(listOfAvailableFilesForName)
+                    botVoiceObject.play(discord.FFmpegPCMAudio(trollFilePath + "/" + randomSoundFile),
+                                        after=lambda e: print(f"Pahie trolled {user} in the game {game}."))
+                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                    botVoiceObject.source.volume = 0.12
 
             else:
-                print("user not in the same channel as the bot.")
+                inputErrorCheck = f"trollfiles/{user}"
+
+                if os.path.exists(inputErrorCheck):
+                    await ctx.send(f"Pahie thinks you switched the argument order! Could it be that you ment to write: \'!troll {game} {user}\'?")
+                else:
+                    await ctx.send("Please pick a game Pahie knows! (wow, csgo)")
 
 
         except Exception as e:
