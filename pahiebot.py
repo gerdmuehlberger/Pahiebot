@@ -243,13 +243,19 @@ async def skrbl(ctx):
 @bot.command(pass_context=True)
 async def helpmepahie(ctx):
     await ctx.send("**!summonpahie:**\n Summon Pahie into your channel.\n\n"
+                   "**!sendpahie channel** \n Sends Pahie in a specified channel (Example: !sendpahie cs:go)\n\n"
                    "**!kickpahie:**\n Kick Pahie out of your channel.\n\n"
-                   "**!bobquote:**\n Pahie plays Spongebobquote (Requires summoning to a channel first). \n\n"
                    "**!w2g:**\n Pahie sends a watch2gether room. \n\n"
+                   "**!skrbl:**\n Pahie sends link to skrbbl.io. \n\n"
+                   "**!bobquote:**\n Pahie plays a random Spongebobquote. This command requires Pahie to be in a voicechannel. \n\n"
                    "**!dankmeme:**\n Pahie sends a random dank meme thats hot on reddit. \n\n"
                    "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
                    "(Example: !dmc tick trick track) \n\n"
-                   "**!skrbl:**\n Pahie sends link to skrbbl.io. \n\n"
+
+                 #  "**!troll user game:**\n Pahie trolls by making a random callout of the specified user for the specified game. "
+                 #  "This command requires Pahie to be in a voicechannel. "
+                 #  "(Example: !troll danschi csgo) \n\n"
+
                    )
 
 
@@ -301,6 +307,7 @@ async def bobquote(ctx):
 # Pahie trolls ingame
 #
 
+'''
 @bot.command(pass_context=True)
 async def troll(ctx, user, game):
 
@@ -352,7 +359,7 @@ async def troll(ctx, user, game):
     except AttributeError as ae:
         print(f"e: {ae}")
         await ctx.send("Oops, Pahie could not troll.")
-
+'''
 
 #######################################################################
 ####################      REDDIT API SECTION     ######################
@@ -480,8 +487,8 @@ async def on_message(message):
     if message.content.startswith('!dmc'):
         await bot.process_commands(message)
 
-    if message.content.startswith('!troll'):
-        await bot.process_commands(message)
+#    if message.content.startswith('!troll'):
+#        await bot.process_commands(message)
 
 
 
