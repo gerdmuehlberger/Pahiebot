@@ -252,11 +252,11 @@ async def helpmepahie(ctx):
                    "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
                    "(Example: !dmc tick trick track) \n\n"
                    "**!godeep:**\n Pahie makes you think about life. \n\n"
+                   "**!joke:**\n Pahie tells you a joke. \n\n"
 
-                 #  "**!troll user game:**\n Pahie trolls by making a random callout of the specified user for the specified game. "
-                 #  "This command requires Pahie to be in a voicechannel. "
-                 #  "(Example: !troll danschi csgo) \n\n"
-
+                     #  "**!troll user game:**\n Pahie trolls by making a random callout of the specified user for the specified game. "
+                     #  "This command requires Pahie to be in a voicechannel. "
+                     #  "(Example: !troll danschi csgo) \n\n"
                    )
 
 
@@ -466,6 +466,23 @@ async def godeep(ctx):
             print(f"Could not fetch a quote: {e}")
 
 
+@bot.command(pass_context=True)
+async def joke(ctx):
+    try:
+        jokeurl = 'https://sv443.net/jokeapi/v2/joke/Miscellaneous?blacklistFlags=racist,sexist'
+        payload = {}
+        headers = {'Accept': 'application/json'}
+        response = requests.request("GET", jokeurl, headers=headers, data=payload).json()
+        jokeSetup = response['setup']
+        jokeDelivery = response['delivery']
+
+        await ctx.send(f"{jokeSetup}\n**{jokeDelivery}**")
+
+    except Exception as e:
+        print(f"Error on joke function: {e}")
+
+
+
 #######################################################################
 ##################     COMMAND PROCESSING SECTION     #################
 #######################################################################
@@ -493,6 +510,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content == '!godeep':
+        await bot.process_commands(message)
+
+    if message.content == '!joke':
         await bot.process_commands(message)
 
     if message.content == '!bobquote':
