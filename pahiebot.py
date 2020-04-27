@@ -5,7 +5,6 @@ from discord.ext import commands
 from discord.utils import get
 import random
 from pathlib import Path
-import json
 import sys
 import logging
 import time
@@ -13,7 +12,8 @@ import youtube_dl
 import praw
 import itertools
 import traceback
-
+import requests
+import json
 
 #######################################################################
 #################     GENERAL SETUP     ###############################
@@ -251,6 +251,7 @@ async def helpmepahie(ctx):
                    "**!dankmeme:**\n Pahie sends a random dank meme thats hot on reddit. \n\n"
                    "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
                    "(Example: !dmc tick trick track) \n\n"
+                   "**!godeep:**\n Pahie makes you think about life. \n\n"
 
                  #  "**!troll user game:**\n Pahie trolls by making a random callout of the specified user for the specified game. "
                  #  "This command requires Pahie to be in a voicechannel. "
@@ -267,7 +268,6 @@ async def helpmepahie(ctx):
 # play random spongebob quote
 #
 @bot.command(pass_context=True)
-
 async def bobquote(ctx):
 
     try:
@@ -377,7 +377,7 @@ async def dankmeme(ctx):
     try:
 
         subreddits = ["memes", "dankmemes", "DeepFriedMemes"]
-        randNumberSubreddit = random.randint(0,2)
+        randNumberSubreddit = random.randint(0,len(subreddits)-1)
         randNumberMeme = random.randint(2, 14)
         subRedditObject = reddit.subreddit(subreddits[randNumberSubreddit])
         topPostsOfsubRedditObject = subRedditObject.hot(limit=15)
@@ -442,8 +442,28 @@ async def dmc(ctx, *args):
 
 
 #######################################################################
-###################      LEVELING SECTION     #########################
+###################      TEXTREPLY SECTION     ########################
 #######################################################################
+
+
+@bot.command(pass_context=True)
+async def godeep(ctx):
+    try:
+        quotesAPIurl = ' https://opinionated-quotes-api.gigalixirapp.com/v1/quotes'
+        response = requests.get(quotesAPIurl).json()
+        quote = response['quotes'][0]['quote']
+        author = response['quotes'][0]['author']
+
+        await ctx.send(f"*\'{quote}\'*\n **- {author}**")
+    except Exception as e:
+        try:
+            quotesAPIurl = ' https://opinionated-quotes-api.gigalixirapp.com/v1/quotes'
+            response = requests.get(quotesAPIurl).json()
+            quote = response['quotes'][0]['quote']
+
+            await ctx.send(f"*\'{quote}\'*\n **- Unknown**")
+        except Exception as e:
+            print(f"Could not fetch a quote: {e}")
 
 
 #######################################################################
@@ -470,6 +490,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content == '!helpmepahie':
+        await bot.process_commands(message)
+
+    if message.content == '!godeep':
         await bot.process_commands(message)
 
     if message.content == '!bobquote':
