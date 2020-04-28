@@ -99,13 +99,22 @@ async def on_ready():
 ###############     REDDIT CONNECTOR     ##############################
 #######################################################################
 
-secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
 
-use_script=secretFile['use_script']
-client_secret=secretFile['client_secret']
-user_agent=secretFile['user_agent']
-username=secretFile['username']
-password=secretFile['password']
+if is_prod:
+    use_script = os.environ.get('use_script')
+    client_secret = os.environ.get('client_secret')
+    user_agent = os.environ.get('user_agent')
+    username = os.environ.get('username')
+    password = os.environ.get('password')
+
+else:
+    secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
+
+    use_script=secretFile['use_script']
+    client_secret=secretFile['client_secret']
+    user_agent=secretFile['user_agent']
+    username=secretFile['username']
+    password=secretFile['password']
 
 
 try:
