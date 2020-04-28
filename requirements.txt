@@ -1,0 +1,7 @@
+discord
+discord-py
+pyNaCl
+praw
+json
+random
+pathlib
