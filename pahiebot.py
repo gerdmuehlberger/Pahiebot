@@ -296,8 +296,8 @@ async def bobquote(ctx):
                 if botVoiceObject is not None:
                     rand_number = random.randint(1, 21)
                     botVoiceObject.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print(f"finished playing quote #{rand_number}."))
-                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                    botVoiceObject.source.volume = 0.07
+                    #botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                    #botVoiceObject.source.volume = 0.07
 
                 else:
                     await ctx.send("Pahie is not here!")
