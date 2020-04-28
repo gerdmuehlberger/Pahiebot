@@ -1,16 +1,10 @@
-import os
-from os import listdir
 import discord
 from discord.ext import commands
 from discord.utils import get
 import random
 from pathlib import Path
 import sys
-import logging
-import time
-import youtube_dl
 import praw
-import itertools
 import traceback
 import requests
 import json
