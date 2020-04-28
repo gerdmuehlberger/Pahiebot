@@ -317,6 +317,7 @@ async def bobquote(ctx):
 #
 # Pahie trolls ingame
 #
+
 '''
 @bot.command(pass_context=True)
 async def troll(ctx, user, game):
