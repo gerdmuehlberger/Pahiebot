@@ -8,6 +8,7 @@ import praw
 import traceback
 import requests
 import json
+import os
 
 
 #######################################################################
@@ -19,10 +20,17 @@ currentWorkingDirectory = str(currentWorkingDirectory)
 print("Working directory: ", currentWorkingDirectory)
 
 
-# Authorization
-secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
-bot = commands.Bot(command_prefix='!', case_insensitive=True)
-bot.config_token = secretFile['token']
+# Discord Authorization
+
+is_prod = os.environ.get('IS_HEROKU', None)
+
+if is_prod:
+    bot = commands.Bot(command_prefix='!', case_insensitive=True)
+    bot.config_token = os.environ.get('token')
+else:
+    secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
+    bot = commands.Bot(command_prefix='!', case_insensitive=True)
+    bot.config_token = secretFile['token']
 
 
 
