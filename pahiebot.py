@@ -286,28 +286,28 @@ async def bobquote(ctx):
         channelNameOfMessageAuthor = ctx.message.author.voice.channel;
         channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
 
-        #try:
+        try:
 
-        botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
-        commandAuthor = str(ctx.message.author).split('#')[0];
+            botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
+            commandAuthor = str(ctx.message.author).split('#')[0];
 
-        if channelNameOfMessageAuthor == channelNameOfBotConnection:
+            if channelNameOfMessageAuthor == channelNameOfBotConnection:
 
-            if botVoiceObject is not None:
-                rand_number = random.randint(1, 21)
-                botVoiceObject.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print(f"finished playing quote #{rand_number}."))
-                botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                botVoiceObject.source.volume = 0.07
+                if botVoiceObject is not None:
+                    rand_number = random.randint(1, 21)
+                    botVoiceObject.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print(f"finished playing quote #{rand_number}."))
+                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                    botVoiceObject.source.volume = 0.07
+
+                else:
+                    await ctx.send("Pahie is not here!")
 
             else:
-                await ctx.send("Pahie is not here!")
+                await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
 
-        else:
-            await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
-
-        #except Exception as e:
-         #   print("function !bobquote could not be executed because: ", e)
-          #  await ctx.send(f"Pahie is already playing a bobquote!")
+        except Exception as e:
+            print("function !bobquote could not be executed because: ", e)
+            await ctx.send(f"Pahie is already playing a bobquote!")
 
     except AttributeError:
         print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
