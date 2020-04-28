@@ -1,7 +1,6 @@
 discord
 discord-py
 pyNaCl
-praw-core==1.0.1
 praw==6.5.1 
 json
 random
