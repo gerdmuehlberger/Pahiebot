@@ -1,7 +1,8 @@
 discord
 discord-py
 pyNaCl
-praw
+praw-core
+praw==6.5.1 
 json
 random
 pathlib
