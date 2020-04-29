@@ -166,7 +166,7 @@ async def sendpahie(ctx, channelname):
         channelToSendBotTo = None
 
         for channel in voicechannels:
-            if channel.name == channelname:
+            if channel.name.lower() == channelname.lower():
                 channelToSendBotTo = channel
 
         if channelToSendBotTo != None:
@@ -189,7 +189,6 @@ async def sendpahie(ctx, channelname):
 
     except AttributeError:
         print("didnt work.")
-
 
 #
 # send the bot out of the voice channel
