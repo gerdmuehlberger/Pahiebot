@@ -452,7 +452,14 @@ async def dmc(ctx, *args):
         print(f"could not run !dmc command: {e}")
 
 
+#
+# Pahie starts a game of eels and escalators
+#
 
+@bot.command(pass_context=True)
+async def eae(ctx, player1, player2):
+    
+    await ctx.send("asdf")
 
 #######################################################################
 ###################      TEXTREPLY SECTION     ########################
