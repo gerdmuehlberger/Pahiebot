@@ -10,26 +10,15 @@
 	ingame call of that game so players will think the call is real
 
 
-<<<<<<< HEAD
-- there seems to be an issue with the !bobquote command
-	-this issue has been fixed, it has todo with ffmpeg not being installed on the machine that the bot is running:
-	-keep in mind for real hosting on raspberry! (ffmpeg has to be installed in order to play soundfiles!)
 
-
-
-
-
-- ISSUE any command can be run with a message appended atm. this shouldnt be the case (e.g. !summonpahie asdf fdsa works, while it shouldnt)
-
-=======
->>>>>>> 9c96e86c8a1c1002b20030ef55b6749ae2982793
 
 - MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
 
 - MINOR ISSUE edit the messages which get returned in discord to something that makes more sense.
 
 
-
+- OPTIMISATION make it so the audio functions automatically detect how many files are in the folder (instead of hardcoding this)
+- OPTIMISATION add a function once the troll function is deployed which lets users check which users can be trolled and which games are supported
 - OPTIMISATION comment out/refactor the whole bobquote section so it makes more sense
 - OPTIMISATION add better return messages of the bot (e.g. include username)
 - OPTIMISATION the reddit meme function runs kinda slow and can be optimised
