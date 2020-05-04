@@ -291,11 +291,13 @@ async def bobquote(ctx):
 
             botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
             commandAuthor = str(ctx.message.author).split('#')[0];
+            fileamountSpongebobquoteFolder = len(listdir("bobquotes/"))
+            print(f"bobquoteamount: {fileamountSpongebobquoteFolder}")
 
             if channelNameOfMessageAuthor == channelNameOfBotConnection:
 
                 if botVoiceObject is not None:
-                    rand_number = random.randint(1, 23)
+                    rand_number = random.randint(1, fileamountSpongebobquoteFolder)
                     botVoiceObject.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print(f"finished playing quote #{rand_number}."))
                     botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
                     botVoiceObject.source.volume = 0.07
@@ -332,14 +334,13 @@ async def atvquote(ctx):
 
             botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
             commandAuthor = str(ctx.message.author).split('#')[0];
-            
-            fileamount = len(listdir("atvquotes/"))
-            print(fileamount)
+            fileamountAtvquoteFolder = len(listdir("atvquotes/"))
+            print(f"bobquoteamount: {fileamountAtvquoteFolder}")
 
             if channelNameOfMessageAuthor == channelNameOfBotConnection:
 
                 if botVoiceObject is not None:
-                    rand_number = random.randint(1, 19)
+                    rand_number = random.randint(1, fileamountAtvquoteFolder)
 
                     botVoiceObject.play(discord.FFmpegPCMAudio(f"atvquotes/{rand_number}.mp3"),
                                         after=lambda e: print(f"finished playing quote #{rand_number}."))
