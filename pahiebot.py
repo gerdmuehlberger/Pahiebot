@@ -339,7 +339,7 @@ async def atvquote(ctx):
                     botVoiceObject.play(discord.FFmpegPCMAudio(f"atvquotes/{rand_number}.mp3"),
                                         after=lambda e: print(f"finished playing quote #{rand_number}."))
                     botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                    botVoiceObject.source.volume = 0.1
+                    botVoiceObject.source.volume = 0.2
 
                 else:
                     await ctx.send("Pahie is not here!")
