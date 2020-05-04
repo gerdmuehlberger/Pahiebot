@@ -9,6 +9,7 @@ import traceback
 import requests
 import json
 import os
+from os import listdir
 
 #######################################################################
 #################     GENERAL SETUP     ###############################
@@ -331,11 +332,15 @@ async def atvquote(ctx):
 
             botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
             commandAuthor = str(ctx.message.author).split('#')[0];
+            
+            fileamount = len(listdir("atvquotes/"))
+            print(fileamount)
 
             if channelNameOfMessageAuthor == channelNameOfBotConnection:
 
                 if botVoiceObject is not None:
                     rand_number = random.randint(1, 19)
+
                     botVoiceObject.play(discord.FFmpegPCMAudio(f"atvquotes/{rand_number}.mp3"),
                                         after=lambda e: print(f"finished playing quote #{rand_number}."))
                     botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
