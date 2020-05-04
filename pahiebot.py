@@ -253,11 +253,12 @@ async def skrbl(ctx):
 @bot.command(pass_context=True)
 async def helpmepahie(ctx):
     await ctx.send("**!summonpahie:**\n Summon Pahie into your channel.\n\n"
-                   "**!sendpahie channel** \n Sends Pahie in a specified channel (Example: !sendpahie cs:go)\n\n"
+                   "**!sendpahie channel:** \n Sends Pahie in a specified channel (Example: !sendpahie cs:go)\n\n"
                    "**!kickpahie:**\n Kick Pahie out of your channel.\n\n"
                    "**!w2g:**\n Pahie sends a watch2gether room. \n\n"
                    "**!skrbl:**\n Pahie sends link to skrbbl.io. \n\n"
                    "**!bobquote:**\n Pahie plays a random Spongebobquote. This command requires Pahie to be in a voicechannel. \n\n"
+                   "**!atvquote:**\n Pahie plays a random ATV quote. This command requires Pahie to be in a voicechannel. \n\n"
                    "**!dankmeme:**\n Pahie sends a random dank meme thats hot on reddit. \n\n"
                    "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
                    "(Example: !dmc tick trick track) \n\n"
@@ -338,7 +339,7 @@ async def atvquote(ctx):
                     botVoiceObject.play(discord.FFmpegPCMAudio(f"atvquotes/{rand_number}.mp3"),
                                         after=lambda e: print(f"finished playing quote #{rand_number}."))
                     botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                    botVoiceObject.source.volume = 0.07
+                    botVoiceObject.source.volume = 0.1
 
                 else:
                     await ctx.send("Pahie is not here!")
