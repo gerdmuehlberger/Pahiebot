@@ -30,7 +30,7 @@ if is_prod:
 else:
     secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
     bot = commands.Bot(command_prefix='!', case_insensitive=True)
-    bot.config_token = secretFile['token']
+    bot.config_token = secretFile['devtoken']
 
 
 
@@ -276,6 +276,104 @@ async def helpmepahie(ctx):
 #######################################################################
 ################      AUDIO PLAYING SECTION     #######################
 #######################################################################
+
+#
+# return a list of all available files for an audio function
+#
+@bot.command(pass_context=True)
+async def availableaudio(ctx, quotetype):
+    supportedQuotes = ['atv', 'spongebob']
+
+    if quotetype in supportedQuotes:
+        quoteFilePath = f"quotes/{quotetype}/"
+
+        try:
+            if os.path.exists(quoteFilePath) is True:
+                listofQuotes = listdir(quoteFilePath)
+                listofQuotes.sort()
+                await ctx.send('\n'.join(listofQuotes).replace('.mp3', ''))
+            else:
+                await ctx.send("Seems like Pahie does not have any files for that category!")
+        except Exception as e:
+            print(f"available quotes function crashed: {e}")
+    else:
+        await ctx.send("Please enter a supported category to see which audiofiles are available! (Currently supported categories are: 'atv' and 'spongebob')")
+
+
+
+@bot.command(pass_context=True)
+async def play(ctx, quotetype, quotename):
+    supportedQuotes = ['atv', 'spongebob']
+
+    try:
+        channelNameOfMessageAuthor = ctx.message.author.voice.channel;
+        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
+
+        try:
+            botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
+            commandAuthor = str(ctx.message.author).split('#')[0];
+
+            if quotetype in supportedQuotes:
+                quoteFilePath = f"quotes/{quotetype}/"
+                fileamountQuoteFolder = len(listdir(quoteFilePath))
+                listofQuotes = listdir(quoteFilePath)
+
+
+                if channelNameOfMessageAuthor == channelNameOfBotConnection:
+                    try:
+                        if quotename == "random":
+                            if botVoiceObject is not None:
+                                rand_number = random.randint(1, fileamountQuoteFolder)
+
+                                botVoiceObject.play(
+                                    discord.FFmpegPCMAudio(quoteFilePath + listofQuotes[rand_number]),
+                                    after=lambda e: print(f"finished playing quote: {listofQuotes[rand_number]}."))
+                                botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                                botVoiceObject.source.volume = 0.5
+
+                            else:
+                                await ctx.send("Pahie is not here!")
+
+                        elif quotename + ".mp3" in listofQuotes:
+                            if botVoiceObject is not None:
+                                botVoiceObject.play(discord.FFmpegPCMAudio(quoteFilePath + quotename + ".mp3"),
+                                                    after=lambda e: print(
+                                                        f"finished playing quote: {quotename}."))
+                                botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                                botVoiceObject.source.volume = 0.5
+
+                            else:
+                                await ctx.send("Pahie is not here!")
+
+                        else:
+                            await ctx.send("Pahie could not find this quote :-(")
+
+                    except Exception as e:
+                        print(f"couldnt run play function: {e}")
+
+                else:
+                    await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
+
+            else:
+                await ctx.send("Pahie does not have quotes for this category :-(")
+
+
+        except discord.errors.ClientException as ce:
+            print(f"play function broke: {ce}")
+
+        except Exception as e:
+            print("function !play could not be executed because: ", e)
+            await ctx.send(f"Pahie is already playing a soundfile!")
+
+    except AttributeError:
+        print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
+        await ctx.send("Pahie could not be found in any channel.")
+
+
+
+
+'''
+
 #
 # play random spongebob quote
 #
@@ -310,7 +408,7 @@ async def bobquote(ctx):
 
         except discord.errors.ClientException as ce:
             print(f"bobquote broke: {ce}")
-            
+
         except Exception as e:
             print("function !bobquote could not be executed because: ", e)
             await ctx.send(f"Pahie is already playing a soundfile!")
@@ -320,58 +418,13 @@ async def bobquote(ctx):
         await ctx.send("Pahie could not be found in any channel.")
 
 
-#
-# play random atv quote
-#
-@bot.command(pass_context=True)
-async def atvquote(ctx):
-    try:
-
-        channelNameOfMessageAuthor = ctx.message.author.voice.channel;
-        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
-
-        try:
-
-            botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
-            commandAuthor = str(ctx.message.author).split('#')[0];
-            fileamountAtvquoteFolder = len(listdir("atvquotes/"))
-            print(f"bobquoteamount: {fileamountAtvquoteFolder}")
-
-            if channelNameOfMessageAuthor == channelNameOfBotConnection:
-
-                if botVoiceObject is not None:
-                    rand_number = random.randint(1, fileamountAtvquoteFolder)
-
-                    botVoiceObject.play(discord.FFmpegPCMAudio(f"atvquotes/{rand_number}.mp3"),
-                                        after=lambda e: print(f"finished playing quote #{rand_number}."))
-                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                    botVoiceObject.source.volume = 0.4
-
-                else:
-                    await ctx.send("Pahie is not here!")
-
-            else:
-                await ctx.send(
-                    f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
-
-        except discord.errors.ClientException as ce:
-            print(f"atvquote broke: {ce}")
-
-        except Exception as e:
-            print("function !atvquote could not be executed because: ", e)
-            await ctx.send(f"Pahie is already playing a soundfile!")
-
-    except AttributeError:
-        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author,
-                                                                                        ctx.message.content))
-        await ctx.send("Pahie could not be found in any channel.")
 
 
 #
 # Pahie trolls ingame
 #
 
-'''
+
 @bot.command(pass_context=True)
 async def troll(ctx, user, game):
 
@@ -589,7 +642,10 @@ async def on_message(message):
     if message.content == '!bobquote':
         await bot.process_commands(message)
 
-    if message.content == '!atvquote':
+    if message.content.startswith('!play'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!availableaudio'):
         await bot.process_commands(message)
 
     if message.content == '!w2g':
