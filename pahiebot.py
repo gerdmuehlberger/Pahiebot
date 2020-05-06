@@ -258,7 +258,7 @@ async def helpmepahie(ctx):
                    "**!kickpahie:**\n Kick Pahie out of your channel.\n\n"
                    "**!w2g:**\n Pahie sends a watch2gether room. \n\n"
                    "**!skrbl:**\n Pahie sends link to skrbbl.io. \n\n"
-                   "**!availableaudio category:**\n Return a list of available audiofiles for the '!play' function. (Currently supported categories: 'atv', 'spongebob') \n\n"
+                   "**!availableaudio category:**\n Return a list of available audiofiles for the '!play' function. (Currently supported categories: 'atv', 'spongebob', 'misc') \n\n"
                    "**!play category filename:**\n Pahie plays the audiofile passed by the user. This command requires Pahie to be in a voicechannel. (Type 'random' instead of filename to play a random soundfile.) \n\n"
                    "**!dankmeme:**\n Pahie sends a random dank meme thats hot on reddit. \n\n"
                    "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
@@ -282,7 +282,7 @@ async def helpmepahie(ctx):
 #
 @bot.command(pass_context=True)
 async def availableaudio(ctx, quotetype):
-    supportedQuotes = ['atv', 'spongebob']
+    supportedQuotes = ['atv', 'spongebob', 'misc']
 
     if quotetype in supportedQuotes:
         quoteFilePath = f"quotes/{quotetype}/"
@@ -297,13 +297,13 @@ async def availableaudio(ctx, quotetype):
         except Exception as e:
             print(f"available quotes function crashed: {e}")
     else:
-        await ctx.send("Please enter a supported category to see which audiofiles are available! (Currently supported categories are: 'atv' and 'spongebob')")
+        await ctx.send("Please enter a supported category to see which audiofiles are available! (Currently supported categories are: 'atv', 'spongebob' and 'misc')")
 
 
 
 @bot.command(pass_context=True)
 async def play(ctx, quotetype, quotename):
-    supportedQuotes = ['atv', 'spongebob']
+    supportedQuotes = ['atv', 'spongebob', 'misc']
 
     try:
         channelNameOfMessageAuthor = ctx.message.author.voice.channel;
