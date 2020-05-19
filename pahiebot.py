@@ -291,7 +291,11 @@ async def availableaudio(ctx, quotetype):
             if os.path.exists(quoteFilePath) is True:
                 listofQuotes = listdir(quoteFilePath)
                 listofQuotes.sort()
-                await ctx.send('\n'.join(listofQuotes).replace('.mp3', ''))
+                responseListAsString = ','.join(listofQuotes).replace('.mp3', '')
+                responseList = responseListAsString.split(",")
+
+
+                await ctx.send(f'```css\navailable soundfiles:``````fix\n{responseList}```')
             else:
                 await ctx.send("Seems like Pahie does not have any files for that category!")
         except Exception as e:
