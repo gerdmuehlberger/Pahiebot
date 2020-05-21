@@ -1,8 +1,3 @@
-- generalize the audioplaying functions:
-	make only one func e.g "quote" which takes as arguments
-		1. type of quote
-		2. quotename
-
 - create some funny pahie pics in photoshop and add a command to fetch
   a random funny pahie pic (!turnmeonpahie command)
 
@@ -20,7 +15,6 @@
 
 
 - OPTIMISATION add a function once the troll function is deployed which lets users check which users can be trolled and which games are supported
-- OPTIMISATION comment out/refactor the whole bobquote section so it makes more sense
 - OPTIMISATION add better return messages of the bot (e.g. include username)
 - OPTIMISATION the reddit meme function runs kinda slow and can be optimised
 

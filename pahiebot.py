@@ -258,7 +258,7 @@ async def helpmepahie(ctx):
                    "**!kickpahie:**\n Kick Pahie out of your channel.\n\n"
                    "**!w2g:**\n Pahie sends a watch2gether room. \n\n"
                    "**!skrbl:**\n Pahie sends link to skrbbl.io. \n\n"
-                   "**!availableaudio category:**\n Return a list of available audiofiles for the '!play' function. (Currently supported categories: 'atv', 'spongebob', 'misc') \n\n"
+                   "**!availableaudio category:**\n Return a list of available audiofiles for the '!play' function. (Currently supported categories: 'atv', 'spongebob', 'misc', 'smoove') \n\n"
                    "**!play category filename:**\n Pahie plays the audiofile passed by the user. This command requires Pahie to be in a voicechannel. (Type 'random' instead of filename to play a random soundfile.) \n\n"
                    "**!dankmeme:**\n Pahie sends a random dank meme thats hot on reddit. \n\n"
                    "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
@@ -282,7 +282,7 @@ async def helpmepahie(ctx):
 #
 @bot.command(pass_context=True)
 async def availableaudio(ctx, quotetype):
-    supportedQuotes = ['atv', 'spongebob', 'misc']
+    supportedQuotes = ['atv', 'spongebob', 'misc', 'smoove']
 
     if quotetype in supportedQuotes:
         quoteFilePath = f"quotes/{quotetype}/"
@@ -295,19 +295,19 @@ async def availableaudio(ctx, quotetype):
                 responseList = responseListAsString.split(",")
 
 
-                await ctx.send(f'```css\navailable soundfiles:``````fix\n{responseList}```')
+                await ctx.send(f'```css\navailable soundfiles for the category {quotetype}:``````fix\n{responseList}```')
             else:
                 await ctx.send("Seems like Pahie does not have any files for that category!")
         except Exception as e:
             print(f"available quotes function crashed: {e}")
     else:
-        await ctx.send("Please enter a supported category to see which audiofiles are available! (Currently supported categories are: 'atv', 'spongebob' and 'misc')")
+        await ctx.send("Please enter a supported category to see which audiofiles are available! (Currently supported categories are: 'atv', 'spongebob', 'misc' and 'smoove')")
 
 
 
 @bot.command(pass_context=True)
 async def play(ctx, quotetype, quotename):
-    supportedQuotes = ['atv', 'spongebob', 'misc']
+    supportedQuotes = ['atv', 'spongebob', 'misc', 'smoove']
 
     try:
         channelNameOfMessageAuthor = ctx.message.author.voice.channel;
@@ -377,51 +377,6 @@ async def play(ctx, quotetype, quotename):
 
 
 '''
-
-#
-# play random spongebob quote
-#
-@bot.command(pass_context=True)
-async def bobquote(ctx):
-
-    try:
-
-        channelNameOfMessageAuthor = ctx.message.author.voice.channel;
-        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
-
-        try:
-
-            botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
-            commandAuthor = str(ctx.message.author).split('#')[0];
-            fileamountSpongebobquoteFolder = len(listdir("bobquotes/"))
-            print(f"bobquoteamount: {fileamountSpongebobquoteFolder}")
-
-            if channelNameOfMessageAuthor == channelNameOfBotConnection:
-
-                if botVoiceObject is not None:
-                    rand_number = random.randint(1, fileamountSpongebobquoteFolder)
-                    botVoiceObject.play(discord.FFmpegPCMAudio(f"bobquotes/{rand_number}.mp3"), after=lambda e: print(f"finished playing quote #{rand_number}."))
-                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                    botVoiceObject.source.volume = 0.07
-
-                else:
-                    await ctx.send("Pahie is not here!")
-
-            else:
-                await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
-
-        except discord.errors.ClientException as ce:
-            print(f"bobquote broke: {ce}")
-
-        except Exception as e:
-            print("function !bobquote could not be executed because: ", e)
-            await ctx.send(f"Pahie is already playing a soundfile!")
-
-    except AttributeError:
-        print("user: {} tried to call the command: {} outside of a voicechannel".format(ctx.message.author, ctx.message.content))
-        await ctx.send("Pahie could not be found in any channel.")
-
-
 
 
 #
