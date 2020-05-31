@@ -537,13 +537,14 @@ def find_user(uid):
 @bot.command(pass_context=True)
 async def signmeuppahie(ctx):
     try:
-        userExists = find_user(ctx.author.id)
+        userid = ctx.author.id
+        userExists = find_user(userid)
 
         if userExists is True:
             await ctx.send("Pahie already knows you!")
 
         elif userExists is False:
-            insert_user(ctx.author.id)
+            insert_user(userid)
             await ctx.send("Pahiebot will remember you from now on!")
 
     except Exception as e:
@@ -555,7 +556,7 @@ async def signmeuppahie(ctx):
 #
 
 @bot.command(pass_context=True)
-async def addfav(ctx, soundfilename, hotkeyword):
+async def addfavourite(ctx, soundfilename, hotkeyword):
     print("asdf")
 
 #######################################################################
@@ -744,7 +745,7 @@ async def on_message(message):
     if message.content == '!signmeuppahie':
         await bot.process_commands(message)
 
-    if message.content.startswith('!addfav'):
+    if message.content.startswith('!addfavourite'):
         await bot.process_commands(message)
 
 #    if message.content.startswith('!troll'):
