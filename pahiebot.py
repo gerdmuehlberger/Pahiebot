@@ -11,6 +11,11 @@ import json
 import os
 from os import listdir
 
+
+import mysql.connector
+from mysql.connector import errorcode
+
+
 #######################################################################
 #################     GENERAL SETUP     ###############################
 #######################################################################
@@ -20,7 +25,7 @@ currentWorkingDirectory = str(currentWorkingDirectory)
 print("Working directory: ", currentWorkingDirectory)
 
 
-# Discord Authorization
+# Discord- / MYSQL-Authorization
 
 is_prod = os.environ.get('IS_HEROKU', None)
 
@@ -32,6 +37,31 @@ else:
     bot = commands.Bot(command_prefix='!', case_insensitive=True)
     bot.config_token = secretFile['devtoken']
 
+    dbhost = secretFile['dbhost']
+    dbname = secretFile['db']
+    dbuser = secretFile['dbuser']
+    dbpass = secretFile['dbpass']
+
+
+# Open a MYSQL connection
+
+def openMYSQLconnection():
+    try:
+        cnx = mysql.connector.connect(user=dbuser, password=dbpass,
+                                      host=dbhost,
+                                      database=dbname)
+        print("connection to db opened.")
+        return cnx
+
+
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
+            print("Invalid user credentials.")
+        elif err.errno == errorcode.ER_BAD_DB_ERROR:
+            print("Database does not exist")
+        else:
+            print(err)
+            cnx.close()
 
 
 #######################################################################
@@ -435,7 +465,98 @@ async def troll(ctx, user, game):
     except AttributeError as ae:
         print(f"e: {ae}")
         await ctx.send("Oops, Pahie could not troll.")
+        
 '''
+
+#######################################################################
+#####################     MYSQL OPERATIONS     ########################
+#######################################################################
+
+#
+# insert a userid to usertable table example
+#
+def insert_user(uid):
+    connectorObject = openMYSQLconnection()
+    query = "INSERT INTO users VALUES (%s)"
+    args = (uid,)
+
+    try:
+        print(f"starting operation: insert_user for id {uid}")
+        cursor = connectorObject.cursor()
+        cursor.execute(query, args)
+
+        connectorObject.commit()
+
+    except Exception as e:
+        print("error: ", e)
+
+    finally:
+        cursor.close()
+        connectorObject.close()
+        print("connection to db closed.")
+
+
+#
+# check if userid already exists
+#
+def find_user(uid):
+    connectorObject = openMYSQLconnection()
+    query = "SELECT * FROM users WHERE uid=%s"
+    args = (uid,)
+
+    try:
+        print("starting operation: find_user")
+        cursor = connectorObject.cursor(buffered=True)
+        cursor.execute(query, args)
+        rows = cursor.fetchall()
+
+        if len(rows) > 0:
+            #if user already exists in db return False
+            return True
+        else:
+            #if user does not exist in db return False
+            return False
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        connectorObject.close()
+        print("connection to db closed.")
+
+
+#######################################################################
+##########      PERSONALISED PLAYLIST (MYSQL) SECTION     #############
+#######################################################################
+
+#
+# create entry for new user
+#
+
+@bot.command(pass_context=True)
+async def signmeuppahie(ctx):
+    try:
+        userExists = find_user(ctx.author.id)
+
+        if userExists is True:
+            await ctx.send("Pahie already knows you!")
+
+        elif userExists is False:
+            insert_user(ctx.author.id)
+            await ctx.send("Pahiebot will remember you from now on!")
+
+    except Exception as e:
+        print("something went wrong: ", e)
+
+
+#
+# add soundfile to favourites
+#
+
+@bot.command(pass_context=True)
+async def addfav(ctx, soundfilename, hotkeyword):
+    print("asdf")
 
 #######################################################################
 ####################      REDDIT API SECTION     ######################
@@ -566,6 +687,7 @@ async def joke(ctx):
 
 
 
+
 #######################################################################
 ##################     COMMAND PROCESSING SECTION     #################
 #######################################################################
@@ -617,6 +739,12 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!dmc'):
+        await bot.process_commands(message)
+
+    if message.content == '!signmeuppahie':
+        await bot.process_commands(message)
+
+    if message.content.startswith('!addfav'):
         await bot.process_commands(message)
 
 #    if message.content.startswith('!troll'):
