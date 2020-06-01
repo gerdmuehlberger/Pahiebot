@@ -50,7 +50,6 @@ def openMYSQLconnection():
         cnx = mysql.connector.connect(user=dbuser, password=dbpass,
                                       host=dbhost,
                                       database=dbname)
-        print("connection to db opened.")
         return cnx
 
 
@@ -475,13 +474,13 @@ async def troll(ctx, user, game):
 #
 # insert a userid to usertable table
 #
-def insert_user(uid):
+def insert_user(user_id):
     connectorObject = openMYSQLconnection()
     query = "INSERT INTO users VALUES (%s)"
-    args = (uid,)
+    args = (user_id,)
 
     try:
-        print(f"starting operation: insert_user for id {uid}")
+        print(f"starting operation: insert_user for id {user_id}")
         cursor = connectorObject.cursor()
         cursor.execute(query, args)
 
@@ -493,17 +492,17 @@ def insert_user(uid):
     finally:
         cursor.close()
         connectorObject.close()
-        print("connection to db closed after executing: insert_user.")
 
 #
 # insert a new row to user_soundfiles table
 #
-def insert_user_soundfile(user_id, soundfile_id, soundkeyword):
+def insert_user_soundfile(user_id, soundfile_id, soundkeyword, incrementor):
     connectorObject = openMYSQLconnection()
-    query = "INSERT INTO user_soundfiles VALUES (%s, %s, %s)"
-    args = (user_id, soundfile_id, soundkeyword)
+    query = "INSERT INTO user_soundfiles VALUES (%s, %s, %s, %s)"
+    args = (user_id, soundfile_id, soundkeyword, incrementor)
 
     try:
+        print(f"starting operation: insert_user_soundfile for id {user_id}")
         cursor = connectorObject.cursor()
         cursor.execute(query, args)
 
@@ -515,20 +514,23 @@ def insert_user_soundfile(user_id, soundfile_id, soundkeyword):
     finally:
         cursor.close()
         connectorObject.close()
-        print("connection to db closed after executing: insert_user_soundfile.")
 
+
+#
+# delete a row in the user_soundfile table
+#
 
 
 #
 # check if userid already exists
 #
-def find_user(uid):
+def find_user(user_id):
     connectorObject = openMYSQLconnection()
     query = "SELECT * FROM users WHERE uid=%s"
-    args = (uid,)
+    args = (user_id,)
 
     try:
-        print("starting operation: find_user")
+        print(f"starting operation: find_user {user_id}")
         cursor = connectorObject.cursor(buffered=True)
         cursor.execute(query, args)
         rows = cursor.fetchall()
@@ -546,7 +548,6 @@ def find_user(uid):
     finally:
         cursor.close()
         connectorObject.close()
-        print("connection to db closed after executing: find_user.")
 
 
 #
@@ -558,7 +559,7 @@ def find_soundfile(soundfilename):
     args = (soundfilename,)
 
     try:
-        print("starting operation: find_soundfile")
+        print(f"starting operation: find_soundfile for {soundfilename}")
         cursor = connectorObject.cursor(buffered=True)
         cursor.execute(query, args)
         rows = cursor.fetchall()
@@ -576,7 +577,6 @@ def find_soundfile(soundfilename):
     finally:
         cursor.close()
         connectorObject.close()
-        print("connection to db closed after executing: find_soundfile.")
 
 #
 # retrieve the id of a soundfilename
@@ -587,7 +587,7 @@ def get_soundfile_id(soundfilename):
     args = (soundfilename,)
 
     try:
-        print("starting operation: get_soundfile_id")
+        print(f"starting operation: get_soundfile_id for {soundfilename}")
         cursor = connectorObject.cursor(buffered=True)
         cursor.execute(query, args)
         rows = cursor.fetchall()
@@ -606,8 +606,30 @@ def get_soundfile_id(soundfilename):
     finally:
         cursor.close()
         connectorObject.close()
-        print("connection to db closed after executing: get_soundfile_id.")
 
+
+#
+# get amount of existing soundfiles for users
+#
+def get_amount_of_user_soundfiles(user_id):
+    connectorObject = openMYSQLconnection()
+    query = "SELECT * FROM user_soundfiles WHERE user_id=%s"
+    args = (user_id,)
+
+    try:
+        print(f"starting operation: get_amount_of_user_soundfiles for {user_id}")
+        cursor = connectorObject.cursor(buffered=True)
+        cursor.execute(query, args)
+        rows = cursor.fetchall()
+
+        return len(rows)
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        connectorObject.close()
 
 
 #
@@ -619,7 +641,7 @@ def find_keyword_for_user(user_id, hotkeyword):
     args = (user_id, hotkeyword)
 
     try:
-        print("starting operation: find_keyword_for_user")
+        print(f"starting operation: find_keyword_for_user keyword:{hotkeyword} user: {user_id}")
         cursor = connectorObject.cursor(buffered=True)
         cursor.execute(query, args)
         rows = cursor.fetchall()
@@ -637,7 +659,6 @@ def find_keyword_for_user(user_id, hotkeyword):
     finally:
         cursor.close()
         connectorObject.close()
-        print("connection to db closed after executing: find_keyword_for_user.")
 
 
 
@@ -679,9 +700,11 @@ async def addfavourite(ctx, soundfilename, hotkeyword):
             userExists = find_user(userid)
             soundfileExists = find_soundfile(soundfilename)
             hotkeywordForUserExists = find_keyword_for_user(userid, hotkeyword)
+            amountOfExistingSoundfilesForUser = get_amount_of_user_soundfiles(userid)
+            allowedAmountOfSoundfilesInFavourites = 3
 
             if userExists == False:
-                await ctx.send("user does not exist, please use signup first")
+                await ctx.send("Pahie does not know you yet! Please use the !signmeuppahie command first to subscribe to personalised playlists!")
 
             elif soundfileExists == False:
                 await ctx.send("Pahie does not know this soundfile. Please make sure to enter an existing soundfile!")
@@ -692,13 +715,32 @@ async def addfavourite(ctx, soundfilename, hotkeyword):
             elif hotkeywordForUserExists == True:
                 await ctx.send(f"You already used the keyword '{hotkeyword}'! Please enter a different one.")
 
+            elif amountOfExistingSoundfilesForUser >= allowedAmountOfSoundfilesInFavourites:
+                await ctx.send(f"You already used all slots for your personalized playlist! Please delete a soundfile in order to add more.")
+
             else:
                 soundfile_id = get_soundfile_id(soundfilename)
-                insert_user_soundfile(userid, soundfile_id, hotkeyword)
+                insert_user_soundfile(userid, soundfile_id, hotkeyword, amountOfExistingSoundfilesForUser + 1)
                 await ctx.send(f"{soundfilename} was added to your favourites under the keyword {hotkeyword}!")
 
         except Exception as e:
             print("an error occured on addfavourite function: ", e)
+
+
+
+@bot.command(pass_context=True)
+async def showfavourites():
+    print("a function to display the currently favourited files")
+
+@bot.command(pass_context=True)
+async def deletefavourite():
+    print("users should be able to delete rows in the db here")
+
+@bot.command(pass_context=True)
+async def pf(hotkeyword):
+    print("here the favourited soundfile should be played")
+
+
 
 #######################################################################
 ####################      REDDIT API SECTION     ######################
@@ -764,9 +806,7 @@ async def dmc(ctx, *args):
 
             for i in range(0, len(args)):
                 loopWinner = random.choice(auxillaryListArgs)
-
                 auxillaryListArgs.remove(loopWinner)
-
                 dmcWinnerDict.update({loopWinner: f"8{randomLengthsList[i] * '='}D"})
 
             await ctx.send("\n".join("{}:\t{}".format(k, v) for k, v in dmcWinnerDict.items()))

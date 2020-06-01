@@ -7,6 +7,11 @@
 	ingame call of that game so players will think the call is real
 
 
+PERSONALISED PLAYLIST
+	- add functionality to delete user from db (including all saved hotkeys from user_soundfiles table)
+	- add functionality to edit keywords for existing user_soundfiles entries
+	- add a function as of "!pf hotkeyname" to play the favourited soundfile hotkey
+	- add a function as of "!myhotkeys" to see a list of all hotkeys and corresponding soundfiles
 
 
 - MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
