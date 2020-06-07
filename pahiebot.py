@@ -63,6 +63,8 @@ def openMYSQLconnection():
             cnx.close()
 
 
+
+
 #######################################################################
 #################     ERRORHANDLING      ##############################
 #######################################################################
@@ -163,9 +165,8 @@ except Exception as e:
 #######################################################################
 
 
-#
-# implement a sneak into channel funciton here (if possible somehow)
-#
+def getAmountOfChannelMembers(channelobject):
+    return len(channelobject.members)
 
 #
 # let the bot join the voice channel of the user who called it.
@@ -181,6 +182,7 @@ async def summonpahie(ctx):
         else:
             voice = await channel.connect()
         await ctx.send(f'Pahie joined {channel}')
+
     except AttributeError:
         await ctx.send("You need to be in a voicechannel to be able to summon Pahie!")
         print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
@@ -660,6 +662,28 @@ def find_keyword_for_user(user_id, hotkeyword):
         cursor.close()
         connectorObject.close()
 
+#
+# retrieve favourites from db
+#
+def find_favourites_for_user(user_id):
+    connectorObject = openMYSQLconnection()
+    query = 'SELECT user_soundfiles.soundkeyword, soundfiles.file_name, soundfiles.file_category FROM user_soundfiles INNER JOIN soundfiles ON user_soundfiles.soundfile_id = soundfiles.file_id WHERE user_soundfiles.user_id=%s;'
+
+    args = (user_id,)
+
+    try:
+        print(f"starting operation: find_favourites_for_user user: {user_id}")
+        cursor = connectorObject.cursor(buffered=True)
+        cursor.execute(query, args)
+        rows = cursor.fetchall()
+        return rows
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        connectorObject.close()
 
 
 
@@ -689,6 +713,11 @@ async def signmeuppahie(ctx):
         print("something went wrong: ", e)
 
 
+@bot.command(pass_context=True)
+async def forgetmepahie():
+    print("a function to delete entire user in database")
+
+
 #
 # add soundfile to favourites
 #
@@ -701,7 +730,7 @@ async def addfavourite(ctx, soundfilename, hotkeyword):
             soundfileExists = find_soundfile(soundfilename)
             hotkeywordForUserExists = find_keyword_for_user(userid, hotkeyword)
             amountOfExistingSoundfilesForUser = get_amount_of_user_soundfiles(userid)
-            allowedAmountOfSoundfilesInFavourites = 3
+            allowedAmountOfSoundfilesInFavourites = 10
 
             if userExists == False:
                 await ctx.send("Pahie does not know you yet! Please use the !signmeuppahie command first to subscribe to personalised playlists!")
@@ -729,8 +758,18 @@ async def addfavourite(ctx, soundfilename, hotkeyword):
 
 
 @bot.command(pass_context=True)
-async def showfavourites():
-    print("a function to display the currently favourited files")
+async def showfavourites(ctx):
+    try:
+        user_id = ctx.author.id
+        user_name = ctx.author.name
+        listOfFavourites = find_favourites_for_user(user_id)
+        await ctx.send(f'```css\n{user_name}\'s favourited soundfiles:```')
+        for soundfile in listOfFavourites:
+            await ctx.send(f'```yaml\n keyword: {soundfile[0]}, soundfile: {soundfile[1]}, category: {soundfile[2]}```')
+
+    except Exception as e:
+        print("err", e)
+
 
 @bot.command(pass_context=True)
 async def deletefavourite():
@@ -739,7 +778,6 @@ async def deletefavourite():
 @bot.command(pass_context=True)
 async def pf(hotkeyword):
     print("here the favourited soundfile should be played")
-
 
 
 #######################################################################
@@ -825,7 +863,7 @@ async def dmc(ctx, *args):
 @bot.command(pass_context=True)
 async def eae(ctx, player1, player2):
     
-    await ctx.send("asdf")
+    await ctx.send("insert a function to play a game of eels and escalators here")
 
 #######################################################################
 ###################      TEXTREPLY SECTION     ########################
@@ -927,6 +965,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!addfavourite'):
+        await bot.process_commands(message)
+
+    if message.content == ('!showfavourites'):
         await bot.process_commands(message)
 
 #    if message.content.startswith('!troll'):
