@@ -32,6 +32,12 @@ is_prod = os.environ.get('IS_HEROKU', None)
 if is_prod:
     bot = commands.Bot(command_prefix='!', case_insensitive=True)
     bot.config_token = os.environ.get('token')
+
+    dbhost = os.environ.get('dbhost')
+    dbname = os.environ.get('db')
+    dbuser = os.environ.get('dbuser')
+    dbpass = os.environ.get('dbpass')
+
 else:
     secretFile = json.load(open(currentWorkingDirectory+'/config/secrets.json'))
     bot = commands.Bot(command_prefix='!', case_insensitive=True)
@@ -284,22 +290,25 @@ async def skrbl(ctx):
 #
 @bot.command(pass_context=True)
 async def helpmepahie(ctx):
-    await ctx.send("**!summonpahie:**\n Summon Pahie into your channel.\n\n"
-                   "**!sendpahie channel:** \n Sends Pahie in a specified channel (Example: !sendpahie cs:go)\n\n"
-                   "**!kickpahie:**\n Kick Pahie out of your channel.\n\n"
-                   "**!w2g:**\n Pahie sends a watch2gether room. \n\n"
-                   "**!skrbl:**\n Pahie sends link to skrbbl.io. \n\n"
-                   "**!availableaudio category:**\n Return a list of available audiofiles for the '!play' function. (Currently supported categories: 'atv', 'spongebob', 'misc', 'smoove') \n\n"
-                   "**!play category filename:**\n Pahie plays the audiofile passed by the user. This command requires Pahie to be in a voicechannel. (Type 'random' instead of filename to play a random soundfile.) \n\n"
-                   "**!dankmeme:**\n Pahie sends a random dank meme thats hot on reddit. \n\n"
-                   "**!dmc names:**\n Pahie starts a dickmeasurement-contest with all the names passed to the command. "
-                   "(Example: !dmc tick trick track) \n\n"
-                   "**!godeep:**\n Pahie makes you think about life. \n\n"
-                   "**!joke:**\n Pahie tells you a joke. \n\n"
-
-                     #  "**!troll user game:**\n Pahie trolls by making a random callout of the specified user for the specified game. "
-                     #  "This command requires Pahie to be in a voicechannel. "
-                     #  "(Example: !troll danschi csgo) \n\n"
+    await ctx.send("```diff\n"
+                   "!summonpahie: \n Summon Pahie into your channel.\n\n"
+                   "!sendpahie channel: \n- 'channel' needs to be a valid channelname on the server. \n Sends Pahie in a specified channel.\n\n"
+                   "!kickpahie: \n Kick Pahie out of your channel.\n\n"
+                   "!w2g: \n Pahie sends a watch2gether room. \n\n"
+                   "!skrbl: \n Pahie sends link to skrbbl.io. \n\n"
+                   "!dankmeme: \n Pahie sends a random dank meme thats hot on reddit. \n\n"
+                   "!dmc names: \n-'names' needs to be a list of strings separated with a space in between. (Example: !dmc tick trick track) \n Pahie starts a dickmeasurement contest with all the names passed to the command. \n\n"
+                   "!godeep: \n Pahie makes you think about life. \n\n"
+                   "!joke: \n Pahie tells you a dadjoke. \n\n"
+                   "!availableaudio category: \n- 'category' must be one of the urrently supported categories: 'atv', 'spongebob', 'misc', 'smoove' \n Return a list of available audiofiles for the '!play' function. \n\n"
+                   "!play category filename: \n- 'filename' must be a valid existing filename in a category, for 'categories' check the availableaudio command."
+                   "\n- (Type 'random' instead of a 'filename' to play a random soundfile from the specified category.) \n Pahie plays the audiofile passed by the user. This command requires Pahie to be in a voicechannel. \n\n"
+                   "!signmeuppahie: \n Enables the functionality to add your own favourite soundfiles to a personal soundboard. \n\n"
+                   "!addfavourite soundfile keyword: \n- 'soundfile' must be a valid existing soundfile "
+                   "\n- 'keyword' must be any string without special characters thats shorter than 20 characters.\n Adds a specified soundfile under the specified keyword to your personal favourites list. \n\n"
+                   "!showfavourites: \n Returns a list of your currently favourited soundfiles and the keywords assigned by the user to play them. \n\n"
+                   "!deletefavourite keyword: \n- 'keyword' must be a keyword that the user assigned to a soundfile previously. \n Deletes the soundfile associated with the specified keyword from your favourites list. \n\n"
+                   "```"
                    )
 
 
