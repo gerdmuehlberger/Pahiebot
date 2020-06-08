@@ -1,17 +1,10 @@
 - create some funny pahie pics in photoshop and add a command to fetch
   a random funny pahie pic (!turnmeonpahie command)
 
-- record some random ingame comments for each game for a future feature which enables ingame trolling
-	
-	- add a command like !troll[NAME OF GAME] and let pahie play a random 
-	ingame call of that game so players will think the call is real
-
 
 PERSONALISED PLAYLIST
 	- add functionality to delete user from db (including all saved hotkeys from user_soundfiles table)
-	- add functionality to edit keywords for existing user_soundfiles entries
 	- add a function as of "!pf hotkeyname" to play the favourited soundfile hotkey
-	- add a function as of "!myhotkeys" to see a list of all hotkeys and corresponding soundfiles
 
 
 - MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
@@ -21,9 +14,8 @@ PERSONALISED PLAYLIST
 
 - OPTIMISATION add a function once the troll function is deployed which lets users check which users can be trolled and which games are supported
 - OPTIMISATION add better return messages of the bot (e.g. include username)
-- OPTIMISATION the reddit meme function runs kinda slow and can be optimised
 
-
+- OPTIMISATION the entire script has reached a point where it needs a bit of refactoring. eg. move all mysql functions to separate script and import it to clean up the whole structure.
 
 IDEAS: 
 
