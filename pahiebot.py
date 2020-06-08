@@ -521,7 +521,22 @@ def insert_user_soundfile(user_id, soundfile_id, soundkeyword, incrementor):
 #
 # delete a row in the user_soundfile table
 #
+def delete_user_soundfile(user_id, soundkeyword):
+    connectorObject = openMYSQLconnection()
+    query = "DELETE FROM user_soundfiles WHERE user_id=%s AND soundkeyword=%s"
+    args = (user_id, soundkeyword)
 
+    try:
+        cursor = connectorObject.cursor()
+        cursor.execute(query, args)
+        connectorObject.commit()
+
+    except Exception as e:
+        print("error: ", e)
+
+    finally:
+        cursor.close()
+        connectorObject.close()
 
 #
 # check if userid already exists
@@ -730,7 +745,7 @@ async def addfavourite(ctx, soundfilename, hotkeyword):
             soundfileExists = find_soundfile(soundfilename)
             hotkeywordForUserExists = find_keyword_for_user(userid, hotkeyword)
             amountOfExistingSoundfilesForUser = get_amount_of_user_soundfiles(userid)
-            allowedAmountOfSoundfilesInFavourites = 10
+            allowedAmountOfSoundfilesInFavourites = 11
 
             if userExists == False:
                 await ctx.send("Pahie does not know you yet! Please use the !signmeuppahie command first to subscribe to personalised playlists!")
@@ -763,17 +778,36 @@ async def showfavourites(ctx):
         user_id = ctx.author.id
         user_name = ctx.author.name
         listOfFavourites = find_favourites_for_user(user_id)
-        await ctx.send(f'```css\n{user_name}\'s favourited soundfiles:```')
+        outputStrings = []
+        outputStrings.append(f'```css\n{user_name}\'s favourited soundfiles:```')
+
         for soundfile in listOfFavourites:
-            await ctx.send(f'```yaml\n keyword: {soundfile[0]}, soundfile: {soundfile[1]}, category: {soundfile[2]}```')
+            outputStrings.append(f'```yaml\n keyword: {soundfile[0]}, soundfile: {soundfile[1]}, category: {soundfile[2]}```')
+
+        await ctx.send(f"".join(outputStrings))
+
 
     except Exception as e:
-        print("err", e)
+        print("error in showfavourites: ", e)
 
 
 @bot.command(pass_context=True)
-async def deletefavourite():
-    print("users should be able to delete rows in the db here")
+async def deletefavourite(ctx, hotkeyword):
+    try:
+        user_id = ctx.author.id
+        user_name = ctx.author.name
+        hotkeywordForUserExists = find_keyword_for_user(user_id, hotkeyword)
+
+        if hotkeywordForUserExists == True:
+            delete_user_soundfile(user_id, hotkeyword)
+            await ctx.send(f"{hotkeyword} was deleted from your favourited soundfiles")
+
+        else:
+            await ctx.send(f"There is no soundfile saved under the keyword: \'**{hotkeyword}**\' for the user **{user_name}**.")
+
+
+    except Exception as e:
+        print("error in deletefavourite: ", e)
 
 @bot.command(pass_context=True)
 async def pf(hotkeyword):
@@ -968,6 +1002,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content == ('!showfavourites'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!deletefavourite'):
         await bot.process_commands(message)
 
 #    if message.content.startswith('!troll'):
