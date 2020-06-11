@@ -292,7 +292,8 @@ async def skrbl(ctx):
 async def helpmepahie(ctx):
     await ctx.send("```diff\n"
                    "!summonpahie: \n Summon Pahie into your channel.\n\n"
-                   "!sendpahie channel: \n- 'channel' needs to be a valid channelname on the server. \n Sends Pahie in a specified channel.\n\n"
+                   "!sendpahie channel: \n- 'channel' needs to be a valid channelname on the server. "
+                   "\n- multi-word channelnames need to be put between \'\' in order for this command to work. \n Sends Pahie in a specified channel.\n\n"
                    "!kickpahie: \n Kick Pahie out of your channel.\n\n"
                    "!w2g: \n Pahie sends a watch2gether room. \n\n"
                    "!skrbl: \n Pahie sends link to skrbbl.io. \n\n"
@@ -351,67 +352,74 @@ async def play(ctx, quotetype, quotename):
 
     try:
         channelNameOfMessageAuthor = ctx.message.author.voice.channel;
-        channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
 
         try:
-            botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
-            commandAuthor = str(ctx.message.author).split('#')[0];
+            channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
 
-            if quotetype in supportedQuotes:
-                quoteFilePath = f"quotes/{quotetype}/"
-                fileamountQuoteFolder = len(listdir(quoteFilePath))
-                listofQuotes = listdir(quoteFilePath)
+            try:
+                botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
+                commandAuthor = str(ctx.message.author).split('#')[0];
+
+                if quotetype in supportedQuotes:
+                    quoteFilePath = f"quotes/{quotetype}/"
+                    fileamountQuoteFolder = len(listdir(quoteFilePath))
+                    listofQuotes = listdir(quoteFilePath)
 
 
-                if channelNameOfMessageAuthor == channelNameOfBotConnection:
-                    try:
-                        if quotename == "random":
-                            if botVoiceObject is not None:
-                                rand_number = random.randint(1, fileamountQuoteFolder)
+                    if channelNameOfMessageAuthor == channelNameOfBotConnection:
+                        try:
+                            if quotename == "random":
+                                if botVoiceObject is not None:
+                                    rand_number = random.randint(1, fileamountQuoteFolder)
 
-                                botVoiceObject.play(
-                                    discord.FFmpegPCMAudio(quoteFilePath + listofQuotes[rand_number]),
-                                    after=lambda e: print(f"finished playing quote: {listofQuotes[rand_number]}."))
-                                botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                                botVoiceObject.source.volume = 0.5
+                                    botVoiceObject.play(
+                                        discord.FFmpegPCMAudio(quoteFilePath + listofQuotes[rand_number]),
+                                        after=lambda e: print(f"finished playing quote: {listofQuotes[rand_number]}."))
+                                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                                    botVoiceObject.source.volume = 0.5
+
+                                else:
+                                    await ctx.send("Pahie is not here!")
+
+                            elif quotename + ".mp3" in listofQuotes:
+                                if botVoiceObject is not None:
+                                    botVoiceObject.play(discord.FFmpegPCMAudio(quoteFilePath + quotename + ".mp3"),
+                                                        after=lambda e: print(
+                                                            f"finished playing quote: {quotename}."))
+                                    botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                                    botVoiceObject.source.volume = 0.5
+
+                                else:
+                                    await ctx.send("Pahie is not here!")
 
                             else:
-                                await ctx.send("Pahie is not here!")
+                                await ctx.send("Pahie could not find this quote :-(")
 
-                        elif quotename + ".mp3" in listofQuotes:
-                            if botVoiceObject is not None:
-                                botVoiceObject.play(discord.FFmpegPCMAudio(quoteFilePath + quotename + ".mp3"),
-                                                    after=lambda e: print(
-                                                        f"finished playing quote: {quotename}."))
-                                botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                                botVoiceObject.source.volume = 0.5
+                        except Exception as e:
+                            print(f"couldnt run play function: {e}")
 
-                            else:
-                                await ctx.send("Pahie is not here!")
-
-                        else:
-                            await ctx.send("Pahie could not find this quote :-(")
-
-                    except Exception as e:
-                        print(f"couldnt run play function: {e}")
+                    else:
+                        await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
 
                 else:
-                    await ctx.send(f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
-
-            else:
-                await ctx.send("Pahie does not have quotes for this category :-(")
+                    await ctx.send("Pahie does not have quotes for this category :-(")
 
 
-        except discord.errors.ClientException as ce:
-            print(f"play function broke: {ce}")
+            except discord.errors.ClientException as ce:
+                print(f"play function broke: {ce}")
 
-        except Exception as e:
-            print("function !play could not be executed because: ", e)
-            await ctx.send(f"Pahie is already playing a soundfile!")
+            except Exception as e:
+                print("function !play could not be executed because: ", e)
+                await ctx.send(f"Pahie is already playing a soundfile!")
+
+        except AttributeError:
+            print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} while bot was not in a voicechannel")
+            await ctx.send("Pahie could not be found in any channel.")
 
     except AttributeError:
         print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
-        await ctx.send("Pahie could not be found in any channel.")
+        await ctx.send("You need to be on the Server in order to give Pahie instructions.")
+
 
 
 
@@ -709,6 +717,24 @@ def find_favourites_for_user(user_id):
         cursor.close()
         connectorObject.close()
 
+def get_soundfilename_associated_with_keyword(user_id, hotkeyword):
+    connectorObject = openMYSQLconnection()
+    query = 'SELECT soundfiles.file_name, soundfiles.file_category FROM user_soundfiles INNER JOIN soundfiles ON user_soundfiles.soundfile_id=soundfiles.file_id WHERE user_soundfiles.user_id=%s AND user_soundfiles.soundkeyword=%s;'
+    args = (user_id, hotkeyword)
+
+    try:
+        cursor = connectorObject.cursor(buffered=True)
+        cursor.execute(query, args)
+        rows = cursor.fetchall()
+        return rows
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        cursor.close()
+        connectorObject.close()
+
 
 
 
@@ -818,9 +844,71 @@ async def deletefavourite(ctx, hotkeyword):
     except Exception as e:
         print("error in deletefavourite: ", e)
 
+
+
 @bot.command(pass_context=True)
-async def pf(hotkeyword):
-    print("here the favourited soundfile should be played")
+async def fav(ctx, hotkeyword):
+    try:
+        user_id = ctx.author.id
+        
+        soundfileAndCategoryAsList = get_soundfilename_associated_with_keyword(user_id, hotkeyword)
+        soundfileAndCategoryAsList = soundfileAndCategoryAsList[0]
+        soundfileName = soundfileAndCategoryAsList[0]
+        soundfileCategory = soundfileAndCategoryAsList[1]
+        quoteFilePath = f"quotes/{soundfileCategory}/"
+
+        #await ctx.send(f"{soundfileName}, {soundfileCategory}")
+
+        try:
+            channelNameOfMessageAuthor = ctx.message.author.voice.channel;
+
+            try:
+                channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
+
+                try:
+                    botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
+                    commandAuthor = str(ctx.message.author).split('#')[0];
+
+                    if channelNameOfMessageAuthor == channelNameOfBotConnection:
+                        try:
+                            if botVoiceObject is not None:
+                                botVoiceObject.play(discord.FFmpegPCMAudio(quoteFilePath + soundfileName+ ".mp3"),
+                                                    after=lambda e: print(
+                                                        f"finished playing quote: {soundfileName}."))
+                                botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                                botVoiceObject.source.volume = 0.5
+
+                            else:
+                                await ctx.send("Pahie is not here!")
+
+
+                        except Exception as e:
+                            print(f"couldnt run play function: {e}")
+
+                    else:
+                        await ctx.send(
+                            f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
+
+
+                except discord.errors.ClientException as ce:
+                    print(f"play function broke: {ce}")
+
+                except Exception as e:
+                    print("function !play could not be executed because: ", e)
+                    await ctx.send(f"Pahie is already playing a soundfile!")
+
+            except AttributeError:
+                print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} while bot was not in a voicechannel")
+                await ctx.send("Pahie could not be found in any channel.")
+
+        except AttributeError:
+            print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
+            await ctx.send("You need to be on the Server in order to give Pahie instructions.")
+
+
+
+    except Exception as e:
+        print(f"Could find keyword in favourites: ", e)
 
 
 #######################################################################
@@ -1014,6 +1102,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content.startswith('!deletefavourite'):
+        await bot.process_commands(message)
+
+    if message.content.startswith('!fav'):
         await bot.process_commands(message)
 
 #    if message.content.startswith('!troll'):
