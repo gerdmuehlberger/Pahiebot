@@ -11,6 +11,7 @@ import json
 import os
 from os import listdir
 
+import re
 
 import mysql.connector
 from mysql.connector import errorcode
@@ -301,7 +302,7 @@ async def helpmepahie(ctx):
                    "!dmc names: \n-'names' needs to be a list of strings separated with a space in between. (Example: !dmc tick trick track) \n Pahie starts a dickmeasurement contest with all the names passed to the command. \n\n"
                    "!godeep: \n Pahie makes you think about life. \n\n"
                    "!joke: \n Pahie tells you a dadjoke. \n\n"
-                   "!availableaudio category: \n- 'category' must be one of the urrently supported categories: 'atv', 'spongebob', 'misc', 'smoove' \n Return a list of available audiofiles for the '!play' function. \n\n"
+                   "!availableaudio category: \n- 'category' must be one of the currently supported categories: 'atv', 'spongebob', 'misc', 'smoove' \n Return a list of available audiofiles for the '!play' function. \n\n"
                    "!play category filename: \n- 'filename' must be a valid existing filename in a category, for 'categories' check the availableaudio command."
                    "\n- (Type 'random' instead of a 'filename' to play a random soundfile from the specified category.) \n Pahie plays the audiofile passed by the user. This command requires Pahie to be in a voicechannel. \n\n"
                    "!signmeuppahie: \n Enables the functionality to add your own favourite soundfiles to a personal soundboard. \n\n"
@@ -780,6 +781,8 @@ async def addfavourite(ctx, soundfilename, hotkeyword):
             soundfileExists = find_soundfile(soundfilename)
             hotkeywordForUserExists = find_keyword_for_user(userid, hotkeyword)
             amountOfExistingSoundfilesForUser = get_amount_of_user_soundfiles(userid)
+            string_check = re.compile('[@_!#$%^&*()<>?/\|}{~:;.äöü]')
+
             allowedAmountOfSoundfilesInFavourites = 11
 
             if userExists == False:
@@ -793,6 +796,9 @@ async def addfavourite(ctx, soundfilename, hotkeyword):
 
             elif hotkeywordForUserExists == True:
                 await ctx.send(f"You already used the keyword '{hotkeyword}'! Please enter a different one.")
+
+            elif (string_check.search(hotkeyword) != None):
+                await ctx.send("The keyword you entered contains special characters. Pahie hates this and refuses to add such a bad keyword, please pick another.")
 
             elif amountOfExistingSoundfilesForUser >= allowedAmountOfSoundfilesInFavourites:
                 await ctx.send(f"You already used all slots for your personalized playlist! Please delete a soundfile in order to add more.")
@@ -850,65 +856,71 @@ async def deletefavourite(ctx, hotkeyword):
 async def fav(ctx, hotkeyword):
     try:
         user_id = ctx.author.id
-        
-        soundfileAndCategoryAsList = get_soundfilename_associated_with_keyword(user_id, hotkeyword)
-        soundfileAndCategoryAsList = soundfileAndCategoryAsList[0]
-        soundfileName = soundfileAndCategoryAsList[0]
-        soundfileCategory = soundfileAndCategoryAsList[1]
-        quoteFilePath = f"quotes/{soundfileCategory}/"
+        keywordExists = find_keyword_for_user(user_id, hotkeyword)
 
-        #await ctx.send(f"{soundfileName}, {soundfileCategory}")
+        if keywordExists == True:
 
-        try:
-            channelNameOfMessageAuthor = ctx.message.author.voice.channel;
+            soundfileAndCategoryAsList = get_soundfilename_associated_with_keyword(user_id, hotkeyword)
+            soundfileAndCategoryAsList = soundfileAndCategoryAsList[0]
+            soundfileName = soundfileAndCategoryAsList[0]
+            soundfileCategory = soundfileAndCategoryAsList[1]
+            quoteFilePath = f"quotes/{soundfileCategory}/"
 
             try:
-                channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
+                channelNameOfMessageAuthor = ctx.message.author.voice.channel;
 
                 try:
-                    botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
-                    commandAuthor = str(ctx.message.author).split('#')[0];
+                    channelNameOfBotConnection = get(bot.voice_clients, guild=ctx.guild).channel;
 
-                    if channelNameOfMessageAuthor == channelNameOfBotConnection:
-                        try:
-                            if botVoiceObject is not None:
-                                botVoiceObject.play(discord.FFmpegPCMAudio(quoteFilePath + soundfileName+ ".mp3"),
-                                                    after=lambda e: print(
-                                                        f"finished playing quote: {soundfileName}."))
-                                botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
-                                botVoiceObject.source.volume = 0.5
+                    try:
+                        botVoiceObject = get(bot.voice_clients, guild=ctx.guild)
+                        commandAuthor = str(ctx.message.author).split('#')[0];
 
-                            else:
-                                await ctx.send("Pahie is not here!")
+                        if channelNameOfMessageAuthor == channelNameOfBotConnection:
+                            try:
+                                if len(soundfileAndCategoryAsList) == 0:
+                                    await ctx.send("You do not have a soundfile saved under this keyword!")
+
+                                else:
+                                    if botVoiceObject is not None:
+                                        botVoiceObject.play(discord.FFmpegPCMAudio(quoteFilePath + soundfileName+ ".mp3"),
+                                                            after=lambda e: print(
+                                                                f"finished playing quote: {soundfileName}."))
+                                        botVoiceObject.source = discord.PCMVolumeTransformer(botVoiceObject.source)
+                                        botVoiceObject.source.volume = 0.5
+
+                                    else:
+                                        await ctx.send("Pahie is not here!")
 
 
-                        except Exception as e:
-                            print(f"couldnt run play function: {e}")
+                            except Exception as e:
+                                print(f"couldnt run play function: {e}")
 
-                    else:
-                        await ctx.send(
-                            f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
+                        else:
+                            await ctx.send(
+                                f"Pahie ignores {commandAuthor} because {commandAuthor} is not in the same channel as him!")
 
 
-                except discord.errors.ClientException as ce:
-                    print(f"play function broke: {ce}")
+                    except discord.errors.ClientException as ce:
+                        print(f"play function broke: {ce}")
 
-                except Exception as e:
-                    print("function !play could not be executed because: ", e)
-                    await ctx.send(f"Pahie is already playing a soundfile!")
+                    except Exception as e:
+                        print("function !play could not be executed because: ", e)
+                        await ctx.send(f"Pahie is already playing a soundfile!")
+
+                except AttributeError:
+                    print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} while bot was not in a voicechannel")
+                    await ctx.send("Pahie could not be found in any channel.")
 
             except AttributeError:
-                print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} while bot was not in a voicechannel")
-                await ctx.send("Pahie could not be found in any channel.")
+                print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
+                await ctx.send("You need to be on the Server in order to give Pahie instructions.")
 
-        except AttributeError:
-            print(f"user: {ctx.message.author} tried to call the command: {ctx.message.content} outside of a voicechannel")
-            await ctx.send("You need to be on the Server in order to give Pahie instructions.")
-
-
+        else:
+            await ctx.send(f"You don't have a file saved under the keyword: {hotkeyword}.")
 
     except Exception as e:
-        print(f"Could find keyword in favourites: ", e)
+        print(f"Couldnt find keyword in favourites: ", e)
 
 
 #######################################################################

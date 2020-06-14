@@ -4,7 +4,6 @@
 
 PERSONALISED PLAYLIST
 	- add functionality to delete user from db (including all saved hotkeys from user_soundfiles table)
-	- add a function as of "!pf hotkeyname" to play the favourited soundfile hotkey
 
 
 - MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
