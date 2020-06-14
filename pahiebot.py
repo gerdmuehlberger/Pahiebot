@@ -309,7 +309,8 @@ async def helpmepahie(ctx):
                    "!addfavourite soundfile keyword: \n- 'soundfile' must be a valid existing soundfile "
                    "\n- 'keyword' must be any string without special characters thats shorter than 20 characters.\n Adds a specified soundfile under the specified keyword to your personal favourites list. \n\n"
                    "!showfavourites: \n Returns a list of your currently favourited soundfiles and the keywords assigned by the user to play them. \n\n"
-                   "!deletefavourite keyword: \n- 'keyword' must be a keyword that the user assigned to a soundfile previously. \n Deletes the soundfile associated with the specified keyword from your favourites list. \n\n"
+                   "!deletefavourite keyword: \n Deletes the soundfile associated with the specified keyword from your favourites list. \n\n"
+                   "!fav keyword: \n Pahie plays the soundfile that you saved under the specified keyword."
                    "```"
                    )
 
