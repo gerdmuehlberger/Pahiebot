@@ -277,6 +277,54 @@ async def kickpahie(ctx):
 async def w2g(ctx):
     await ctx.send("https://www.watch2gether.com/rooms/zuckerimkaffee-d9d68w37fb6sr2ir35?lang=de")
 
+#
+# create a strawpoll url
+#
+@bot.command(pass_context=True)
+async def poll(ctx, *args):
+    if len(args) <= 2:
+        await ctx.send("Please enter more than 1 answer for the poll you want to create!")
+
+    else:
+        try:
+            pollurl = 'https://strawpoll.com/api/poll'
+
+            if ('?' in args[0]) is False:
+                await ctx.send("Please make sure the first argument is a valid question.")
+
+            else:
+                #add all passed arguments to answer list but the first, which should be the question.
+                answerOptionsList = args[1:]
+                jsonConformList = []
+
+                for i in answerOptionsList:
+                    jsonConformList.append(f"{i}")
+
+                data = {"poll":
+                            {"title": f"{args[0]}",
+                            "description": "",
+                            "answers": jsonConformList,
+                            "priv": True,
+                            "ma": False,
+                            "mip": False,
+                            "co": False,
+                            "vpn": False,
+                            "enter_name": True,
+                            "has_deadline": False,
+                            "deadline": "",
+                            "only_reg": 0,
+                            "has_image": 0,
+                            "image": None}
+                }
+
+                headers = {'Accept': 'text/plain'}
+                response = requests.post(pollurl, json=data, headers=headers).json()
+                poll_id = response['content_id']
+
+                await ctx.send(f"https://strawpoll.com/{poll_id}")
+
+        except Exception as e:
+            print(f"Error on poll function: {e}")
 
 #
 # Post link to a skrbbl.io room
@@ -293,13 +341,13 @@ async def skrbl(ctx):
 async def helpmepahie(ctx):
     await ctx.send("```diff\n"
                    "!summonpahie: \n Summon Pahie into your channel.\n\n"
-                   "!sendpahie channel: \n- 'channel' needs to be a valid channelname on the server. "
-                   "\n- multi-word channelnames need to be put between \'\' in order for this command to work. \n Sends Pahie in a specified channel.\n\n"
+                   "!sendpahie channel: \n Sends Pahie in a specified channel.\n\n"
                    "!kickpahie: \n Kick Pahie out of your channel.\n\n"
                    "!w2g: \n Pahie sends a watch2gether room. \n\n"
+                   "!poll \"question?\" answeroptions: \n Pahie creates a poll.\n\n" 
                    "!skrbl: \n Pahie sends link to skrbbl.io. \n\n"
                    "!dankmeme: \n Pahie sends a random dank meme thats hot on reddit. \n\n"
-                   "!dmc names: \n-'names' needs to be a list of strings separated with a space in between. (Example: !dmc tick trick track) \n Pahie starts a dickmeasurement contest with all the names passed to the command. \n\n"
+                   "!dmc names: \n-'names' needs to be a list of strings separated with a space in between. \n Pahie starts a dickmeasurement contest with all the names passed to the command. \n\n"
                    "!godeep: \n Pahie makes you think about life. \n\n"
                    "!joke: \n Pahie tells you a dadjoke. \n\n"
                    "!availableaudio category: \n- 'category' must be one of the currently supported categories: 'atv', 'spongebob', 'misc', 'smoove' \n Return a list of available audiofiles for the '!play' function. \n\n"
@@ -1094,6 +1142,9 @@ async def on_message(message):
         await bot.process_commands(message)
 
     if message.content == '!w2g':
+        await bot.process_commands(message)
+
+    if message.content.startswith('!poll'):
         await bot.process_commands(message)
 
     if message.content == '!dankmeme':
