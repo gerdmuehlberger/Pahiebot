@@ -1,1 +1,1 @@
-worker: python pahiebot.py
+worker: python Main.py
