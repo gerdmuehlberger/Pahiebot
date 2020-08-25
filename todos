@@ -6,6 +6,7 @@ PERSONALISED PLAYLIST
 	- add functionality to delete user from db (including all saved hotkeys from user_soundfiles table)
 
 
+
 - MINOR BUG !summonpahie should send a message like "bot already here" if a user calls him twice in the same channel 
 
 - MINOR ISSUE edit the messages which get returned in discord to something that makes more sense.
