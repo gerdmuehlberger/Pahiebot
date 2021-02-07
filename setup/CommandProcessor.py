@@ -12,61 +12,61 @@ class CommandProcessor:
             # one needs to escape commands from the on_message function, surely theres a better way than this...
             # bug : https://stackoverflow.com/questions/49331096/why-does-on-message-stop-commands-from-working
             #
-            if message.content == '!summonpahie':
+            if message.content == 'pahie summon':
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!sendpahie'):
+            if message.content.startswith('pahie send'):
                 await botObject.process_commands(message)
 
-            if message.content == '!kickpahie':
+            if message.content == 'pahie kick':
                 await botObject.process_commands(message)
 
-            if message.content == '!helpmepahie':
+            if message.content == 'pahie helpme':
                 await botObject.process_commands(message)
 
-            if message.content == '!godeep':
+            if message.content == 'pahie godeep':
                 await botObject.process_commands(message)
 
-            if message.content == '!joke':
+            if message.content == 'pahie joke':
                 await botObject.process_commands(message)
 
-            if message.content == '!bobquote':
+            if message.content.startswith('pahie play'):
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!play'):
+            if message.content.startswith('pahie availableaudio'):
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!availableaudio'):
+            if message.content == 'pahie w2g':
                 await botObject.process_commands(message)
 
-            if message.content == '!w2g':
+            if message.content.startswith('pahie poll'):
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!poll'):
+            if message.content == 'pahie dankmeme':
                 await botObject.process_commands(message)
 
-            if message.content == '!dankmeme':
+            if message.content == 'pahie skrbl':
                 await botObject.process_commands(message)
 
-            if message.content == '!skrbl':
+            if message.content.startswith('pahie dmc'):
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!dmc'):
+            if message.content.startswith('pahie mf'):
                 await botObject.process_commands(message)
 
-            if message.content == '!signmeuppahie':
+            if message.content == 'pahie signmeup':
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!addfavourite'):
+            if message.content.startswith('pahie addfavourite'):
                 await botObject.process_commands(message)
 
-            if message.content == ('!showfavourites'):
+            if message.content == ('pahie showfavourites'):
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!deletefavourite'):
+            if message.content.startswith('pahie deletefavourite'):
                 await botObject.process_commands(message)
 
-            if message.content.startswith('!fav'):
+            if message.content.startswith('pahie fav'):
                 await botObject.process_commands(message)
 
         #    if message.content.startswith('!troll'):

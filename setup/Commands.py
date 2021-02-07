@@ -16,27 +16,28 @@ class Commands:
         #### RETURN LIST OF AVAILABLE COMMANDS #####
         ############################################
         @botObject.command(pass_context=True)
-        async def helpmepahie(ctx):
+        async def helpme(ctx):
             await ctx.send("```diff\n"
-                           "!summonpahie: \n Summon Pahie into your channel.\n\n"
+                           "summon: \n Summon Pahie into your channel.\n\n"
                            #"!sendpahie channel: \n Sends Pahie in a specified channel.\n\n"
-                           "!kickpahie: \n Kick Pahie out of your channel.\n\n"
-                           "!w2g: \n Pahie sends a watch2gether room. \n\n"
-                           "!poll \"question?\" answeroptions: \n Pahie creates a poll.\n\n"
-                           "!skrbl: \n Pahie sends link to skrbbl.io. \n\n"
-                           "!dankmeme: \n Pahie sends a random dank meme thats hot on reddit. \n\n"
-                           "!dmc names: \n-'names' needs to be a list of strings separated with a space in between. \n Pahie starts a dickmeasurement contest with all the names passed to the command. \n\n"
-                           "!godeep: \n Pahie makes you think about life. \n\n"
-                           "!joke: \n Pahie tells you a dadjoke. \n\n"
-                           "!availableaudio category: \n- 'category' must be one of the currently supported categories: 'atv', 'spongebob', 'misc', 'smoove' \n Return a list of available audiofiles for the '!play' function. \n\n"
-                           "!play category filename: \n- 'filename' must be a valid existing filename in a category, for 'categories' check the availableaudio command."
+                           "kick: \n Kick Pahie out of your channel.\n\n"
+                           "w2g: \n Pahie sends a watch2gether room. \n\n"
+                           "poll \"question?\" answeroptions: \n Pahie creates a poll.\n\n"
+                           "skrbl: \n Pahie sends link to skrbbl.io. \n\n"
+                           "dankmeme: \n Pahie sends a random dank meme thats hot on reddit. \n\n"
+                           "dmc names: \n-'names' needs to be a list of strings separated with a space in between. \n Pahie starts a dickmeasurement contest with all the names passed to the command. \n\n"
+                           "godeep: \n Pahie makes you think about life. \n\n"
+                           "joke: \n Pahie tells you a dadjoke. \n\n"
+                           "availableaudio category: \n- 'category' must be one of the currently supported categories: 'atv', 'spongebob', 'misc', 'smoove' \n Return a list of available audiofiles for the '!play' function. \n\n"
+                           "play category filename: \n- 'filename' must be a valid existing filename in a category, for 'categories' check the availableaudio command."
                            "\n- (Type 'random' instead of a 'filename' to play a random soundfile from the specified category.) \n Pahie plays the audiofile passed by the user. This command requires Pahie to be in a voicechannel. \n\n"
-                           "!signmeuppahie: \n Enables the functionality to add your own favourite soundfiles to a personal soundboard. \n\n"
-                           "!addfavourite soundfile keyword: \n- 'soundfile' must be a valid existing soundfile "
+                           "signmeup: \n Enables the functionality to add your own favourite soundfiles to a personal soundboard. \n\n"
+                           "signmeup: \n Enables the functionality to add your own favourite soundfiles to a personal soundboard. \n\n"
+                           "addfavourite soundfile keyword: \n- 'soundfile' must be a valid existing soundfile "
                            "\n- 'keyword' must be any string without special characters thats shorter than 20 characters.\n Adds a specified soundfile under the specified keyword to your personal favourites list. \n\n"
-                           "!showfavourites: \n Returns a list of your currently favourited soundfiles and the keywords assigned by the user to play them. \n\n"
-                           "!deletefavourite keyword: \n Deletes the soundfile associated with the specified keyword from your favourites list. \n\n"
-                           "!fav keyword: \n Pahie plays the soundfile that you saved under the specified keyword."
+                           "showfavourites: \n Returns a list of your currently favourited soundfiles and the keywords assigned by the user to play them. \n\n"
+                           "deletefavourite keyword: \n Deletes the soundfile associated with the specified keyword from your favourites list. \n\n"
+                           "fav keyword: \n Pahie plays the soundfile that you saved under the specified keyword."
                            "```"
                            )
 
@@ -48,7 +49,7 @@ class Commands:
         ####### SUMMONS BOT INTO A CHANNEL #########
         ############################################
         @botObject.command(pass_context=True)
-        async def summonpahie(ctx):
+        async def summon(ctx):
             try:
                 global voiceChannel
                 activeChannelOfMessageAuthor = ctx.message.author.voice.channel
@@ -111,7 +112,7 @@ class Commands:
         ##### KICKS PAHIE INTO FROM A CHANNEL ######
         ############################################
         @botObject.command(pass_context=True)
-        async def kickpahie(ctx):
+        async def kick(ctx):
             try:
                 activeChannelOfMessageAuthor = ctx.message.author.voice.channel
 
@@ -445,6 +446,27 @@ class Commands:
                 await ctx.send("You need to be on the Server in order to give Pahie instructions.")
 
 
+
+        #####################################################
+        ############## MARKYFIES A SENTENCE #################
+        #####################################################
+        @botObject.command(pass_context=True)
+        async def mf(ctx, *args):
+            try:
+
+                if 1 <= len(args) <= 100:
+                    for i in range(0, len(args)):
+                        print(args[i])
+
+                    #await ctx.send("\n".join("{}:\t{}".format(k, v) for k, v in dmcWinnerDict.items()))
+
+                else:
+                    await ctx.send("Only up to 100 words.")
+
+            except Exception as e:
+                print(f"could not run !markify command: {e}")
+
+
 ##### dbfuncs
 
 
@@ -452,7 +474,7 @@ class Commands:
         ################# INSERT NEW USER #################
         ###################################################
         @botObject.command(pass_context=True)
-        async def signmeuppahie(ctx):
+        async def signmeup(ctx):
             try:
                 userid = ctx.author.id
                 userExists = databaseConnectionObject.find_user(userid)

@@ -2,7 +2,6 @@ from discord.ext import commands
 import sys
 import traceback
 
-
 class Errorhandler:
     def __init__(self, botObject):
 

@@ -2,7 +2,7 @@ from discord.ext import commands
 
 class DiscordBotConnector:
 
-    botObject = commands.Bot(command_prefix='!', case_insensitive=True)
+    botObject = commands.Bot(command_prefix='pahie ', case_insensitive=True)
 
     def __init__(self, token):
         self.token = token
