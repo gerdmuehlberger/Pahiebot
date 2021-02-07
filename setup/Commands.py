@@ -451,17 +451,27 @@ class Commands:
         ############## MARKYFIES A SENTENCE #################
         #####################################################
         @botObject.command(pass_context=True)
-        async def mf(ctx, *args):
+        async def markify(ctx, *args):
             try:
+                pattern = re.compile('[gkx]')
+                replace = {'g': 'd',
+                            'k': 't',
+                            'x': 'tz'
+                            }
+
+                response = "";
 
                 if 1 <= len(args) <= 100:
                     for i in range(0, len(args)):
-                        print(args[i])
+                        response += f"{re.sub(pattern,lambda x: replace[x.group(0)], args[i])} "
 
-                    #await ctx.send("\n".join("{}:\t{}".format(k, v) for k, v in dmcWinnerDict.items()))
+                    await ctx.send(response)
+
+                elif len(args) == 0:
+                    await ctx.send("Please enter some words!")
 
                 else:
-                    await ctx.send("Only up to 100 words.")
+                    await ctx.send("You can only enter up to 100 words.")
 
             except Exception as e:
                 print(f"could not run !markify command: {e}")
