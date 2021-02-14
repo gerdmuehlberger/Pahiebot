@@ -17,32 +17,7 @@ class Commands:
         ############################################
         @botObject.command(pass_context=True)
         async def helpme(ctx):
-            await ctx.send("```diff\n"
-                           "summon: \n Summon Pahie into your channel.\n\n"
-                           #"!sendpahie channel: \n Sends Pahie in a specified channel.\n\n"
-                           "kick: \n Kick Pahie out of your channel.\n\n"
-                           "w2g: \n Pahie sends a watch2gether room. \n\n"
-                           "poll \"question?\" answeroptions: \n Pahie creates a poll.\n\n"
-                           "skrbl: \n Pahie sends link to skrbbl.io. \n\n"
-                           "dankmeme: \n Pahie sends a random dank meme thats hot on reddit. \n\n"
-                           "dmc names: \n-'names' needs to be a list of strings separated with a space in between. \n Pahie starts a dickmeasurement contest with all the names passed to the command. \n\n"
-                           "godeep: \n Pahie makes you think about life. \n\n"
-                           "joke: \n Pahie tells you a dadjoke. \n\n"
-                           "availableaudio category: \n- 'category' must be one of the currently supported categories: 'atv', 'spongebob', 'misc', 'smoove' \n Return a list of available audiofiles for the '!play' function. \n\n"
-                           "play category filename: \n- 'filename' must be a valid existing filename in a category, for 'categories' check the availableaudio command."
-                           "\n- (Type 'random' instead of a 'filename' to play a random soundfile from the specified category.) \n Pahie plays the audiofile passed by the user. This command requires Pahie to be in a voicechannel. \n\n"
-                           "signmeup: \n Enables the functionality to add your own favourite soundfiles to a personal soundboard. \n\n"
-                           "signmeup: \n Enables the functionality to add your own favourite soundfiles to a personal soundboard. \n\n"
-                           "addfavourite soundfile keyword: \n- 'soundfile' must be a valid existing soundfile "
-                           "\n- 'keyword' must be any string without special characters thats shorter than 20 characters.\n Adds a specified soundfile under the specified keyword to your personal favourites list. \n\n"
-                           "showfavourites: \n Returns a list of your currently favourited soundfiles and the keywords assigned by the user to play them. \n\n"
-                           "deletefavourite keyword: \n Deletes the soundfile associated with the specified keyword from your favourites list. \n\n"
-                           "fav keyword: \n Pahie plays the soundfile that you saved under the specified keyword."
-                           "```"
-                           )
-
-
-
+            await ctx.send("https://pahiebot.gerdmuehlberger.com/")
 
 
         ############################################
@@ -453,10 +428,11 @@ class Commands:
         @botObject.command(pass_context=True)
         async def markify(ctx, *args):
             try:
+
                 pattern = re.compile('[gkx]')
                 replace = {'g': 'd',
                             'k': 't',
-                            'x': 'tz'
+                            'x': 'tz',
                             }
 
                 response = "";
