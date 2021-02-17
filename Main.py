@@ -4,7 +4,7 @@ from setup.ApiConnector import ApiConnector
 from setup.Commands import Commands
 from setup.CommandProcessor import CommandProcessor
 from setup.Errorhandler import Errorhandler
-
+from setup.SSD_Mobilenet_v3 import SSD_Mobilenet_v3
 from pathlib import Path
 import json
 import os
@@ -60,6 +60,9 @@ Commands(botObject, databaseConnectionObject, redditConnectionObject)
 
 #Enable functionality to process Commands
 CommandProcessor(botObject)
+
+# Initialise Mobilenet Model Class
+#SSD_Mobilenet_v3()
 
 # Running the Bot
 discordBotConnectionObject.runBot()

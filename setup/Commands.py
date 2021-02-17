@@ -4,7 +4,10 @@ import requests
 import re
 import random
 import os
+from io import BytesIO
+from PIL import Image
 from os import listdir
+from setup.SSD_Mobilenet_v3 import SSD_Mobilenet_v3
 
 
 class Commands:
@@ -651,4 +654,25 @@ class Commands:
                 print(f"Couldnt find keyword in favourites: ", e)
 
 
+### ml functions
 
+        @botObject.command()
+        async def whatis(ctx):
+            try:
+                attachment_url = ctx.message.attachments[0].url
+                file_request = requests.get(attachment_url)
+                pic = file_request.content
+                img = BytesIO(pic)
+
+                # Write the stuff
+                with open("./setup/SSD_Mobilenet_v3/img/temp.png", "wb") as f:
+                    f.write(img.getbuffer())
+
+                model = SSD_Mobilenet_v3()
+                model.runModel()
+
+                await ctx.send(file=discord.File('./setup/SSD_Mobilenet_v3/img/sf.png'))
+
+
+            except Exception as e:
+                print(e)

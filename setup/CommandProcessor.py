@@ -69,5 +69,8 @@ class CommandProcessor:
             if message.content.startswith('pahie fav'):
                 await botObject.process_commands(message)
 
+            if message.content.startswith('pahie whatis'):
+                await botObject.process_commands(message)
+
         #    if message.content.startswith('!troll'):
         #        await bot.process_commands(message)
