@@ -5,7 +5,6 @@ import re
 import random
 import os
 from io import BytesIO
-from PIL import Image
 from os import listdir
 from setup.SSD_Mobilenet_v3 import SSD_Mobilenet_v3
 
