@@ -671,8 +671,9 @@ class Commands:
                 model = SSD_Mobilenet_v3()
                 model.runModel()
 
-                await ctx.send(file=discord.File('./setup/SSD_Mobilenet_v3/img/sf.png'))
+                await ctx.send(file=discord.File('./setup/SSD_Mobilenet_v3/img/out.png'))
 
 
             except Exception as e:
+                await ctx.send("An error occured when processing this image. Please try sending it again.")
                 print(e)

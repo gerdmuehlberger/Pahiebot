@@ -1,9 +1,5 @@
 import cv2
-import tensorflow as tf
-from google.protobuf import text_format
 import matplotlib.pyplot as plt
-from google.transit import gtfs_realtime_pb2
-import urllib.request
 
 class SSD_Mobilenet_v3:
     def __init__(self):
@@ -29,7 +25,7 @@ class SSD_Mobilenet_v3:
 
         ClassIndex, confidence, bbox = model.detect(img, confThreshold=0.55)
 
-        font_scale = 2
+        font_scale = 3.5
         font = cv2.FONT_HERSHEY_PLAIN
         for ClassInd, conf, boxes in zip(ClassIndex.flatten(), confidence.flatten(), bbox):
             cv2.rectangle(img, boxes, (255, 0, 0), 6)
@@ -38,4 +34,4 @@ class SSD_Mobilenet_v3:
 
         plt.figure(figsize=(30, 30))
         plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-        plt.savefig('./setup/SSD_Mobilenet_v3/img/sf.png')
+        plt.savefig('./setup/SSD_Mobilenet_v3/img/out.png')
