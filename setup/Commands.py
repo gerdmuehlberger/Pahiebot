@@ -318,7 +318,7 @@ class Commands:
         ##################################################################
         @botObject.command(pass_context=True)
         async def availableaudio(ctx, audiocategory):
-            supportedAudioCategories = ['atv', 'smoove']
+            supportedAudioCategories = ['atv']
 
             if audiocategory in supportedAudioCategories:
                 audioFilePath = f"./audio/audiofiles/{audiocategory}/"
@@ -349,7 +349,7 @@ class Commands:
         ##################################################################
         @botObject.command(pass_context=True)
         async def play(ctx, audiocategory, audiofilename):
-            supportedAudioCategories = ['atv', 'smoove']
+            supportedAudioCategories = ['atv']
 
             try:
                 channelNameOfMessageAuthor = ctx.message.author.voice.channel
