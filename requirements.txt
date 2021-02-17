@@ -8,4 +8,3 @@ mysql-connector==2.2.9
 opencv-python==4.5.1.48
 matplotlib==3.3.4
 tensorflow==2.4.1
-tensorflow-gpu==2.4.1
