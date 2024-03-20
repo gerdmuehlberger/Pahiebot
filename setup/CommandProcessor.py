@@ -48,9 +48,6 @@ class CommandProcessor:
             if message.content == 'pahie skrbl':
                 await botObject.process_commands(message)
 
-            if message.content.startswith('pahie dmc'):
-                await botObject.process_commands(message)
-
             if message.content.startswith('pahie markify'):
                 await botObject.process_commands(message)
 

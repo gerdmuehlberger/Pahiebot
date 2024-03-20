@@ -221,50 +221,6 @@ class Commands:
 
 
 
-
-
-        #####################################################
-        ######### STARTS A DICK MEASUREMENT CONTEST #########
-        #####################################################
-        @botObject.command(pass_context=True)
-        async def dmc(ctx, *args):
-            try:
-                #return type of args = tuple
-                auxillaryListArgs = list(args)
-                randomLengthsList = []
-                dmcWinnerDict = {}
-
-                if len(args) <= 1:
-                    await ctx.send("Please enter more than 1 participants for the dick measurement contest!")
-
-                elif 2 <= len(args) <= 20:
-
-                    while len(randomLengthsList) < len(args):
-                        tempRandomNum = random.randint(1, 22)
-                        if tempRandomNum not in randomLengthsList:
-                            randomLengthsList.append(tempRandomNum)
-                        else:
-                            pass
-
-                    randomLengthsList.sort(reverse=True)
-
-                    for i in range(0, len(args)):
-                        loopWinner = random.choice(auxillaryListArgs)
-                        auxillaryListArgs.remove(loopWinner)
-                        dmcWinnerDict.update({loopWinner: f"8{randomLengthsList[i] * '='}D"})
-
-                    await ctx.send("\n".join("{}:\t{}".format(k, v) for k, v in dmcWinnerDict.items()))
-
-                else:
-                    await ctx.send("Too many participants for a dickmeasurement contest! Pahie can only count up to 20")
-
-            except Exception as e:
-                print(f"could not run !dmc command: {e}")
-
-
-
-
-
         ######################################
         ######### SENDS A DEEP QUOTE #########
         ######################################
@@ -286,7 +242,6 @@ class Commands:
                     await ctx.send(f"*\'{quote}\'*\n **- Unknown**")
                 except Exception as e:
                     print(f"Could not fetch a quote: {e}")
-
 
 
 
